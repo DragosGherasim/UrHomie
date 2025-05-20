@@ -1,0 +1,42 @@
+# Node / React (CRA - frontend)
+**/node_modules/
+**/build/
+**/.env.local
+**/.env.development.local
+**/.env.test.local
+**/.env.production.local
+**/.DS_Store
+
+# Python (user_auth_microservice)
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/.env
+**/.env.development
+**/.env.production
+**/logs/
+
+# VSCode
+.vscode/
+
+# ASP.NET Core (user_management_microservice)
+**/bin/
+**/obj/
+**/logs/
+**/*.user
+**/*.suo
+**/*.userosscache
+**/*.sln.docstates
+
+# Secrets / Config
+**/appsettings.Development.json
+**/appsettings.Production.json
+**/secrets.json
+
+# JetBrains
+.idea/
+*.iml
+
+# Docker / Compose
+**/Dockerfile
+**/compose.yaml

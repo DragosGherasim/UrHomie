@@ -1,0 +1,5 @@
+CREATE DATABASE IF NOT EXISTS `user-auth`;
+
+GRANT SELECT, INSERT, UPDATE, DELETE ON `user-auth`.* TO 'user-auth-manager'@'%';
+
+FLUSH PRIVILEGES;
