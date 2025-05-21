@@ -15,8 +15,9 @@ public class ServiceProviderController(
     [HttpGet("{id:long}")]
     [Authorize(Policy = "SameServiceProviderOnly")]
     [ProducesResponseType(typeof(ServiceProviderDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetServiceProviderById([FromRoute] long id)
     {
         logger.LogInformation("Attempting to fetch service provider with ID: {ServiceProvider}", id);
@@ -30,7 +31,6 @@ public class ServiceProviderController(
         }
 
         logger.LogInformation("Service provider with ID {ServiceProviderId} successfully retrieved.", id);
-        logger.LogDebug("Mapping service provider entity to DTO: {ServiceProvider}", serviceProvider);
 
         var serviceProviderDto = ServiceProviderMapper.ServiceProviderToDto(serviceProvider);
         return Ok(serviceProviderDto);

@@ -1,6 +1,6 @@
 ﻿namespace user_management_microservice.Domain.Entities;
 
-public partial class Client
+public class Client
 {
     public long Id { get; set; }
 

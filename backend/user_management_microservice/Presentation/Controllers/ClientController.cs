@@ -15,8 +15,9 @@ public class ClientController(
     [HttpGet("{id:long}")]
     [Authorize(Policy = "SameClientOnly")]
     [ProducesResponseType(typeof(ClientDto), StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetClientById([FromRoute] long id)
     {
         logger.LogInformation("Attempting to fetch client with ID: {ClientId}", id);
@@ -30,7 +31,6 @@ public class ClientController(
         }
 
         logger.LogInformation("Client with ID {ClientId} successfully retrieved.", id);
-        logger.LogDebug("Mapping client entity to DTO: {Client}", client);
 
         var clientDto = ClientMapper.ClientToDto(client);
         return Ok(clientDto);

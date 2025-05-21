@@ -31,7 +31,6 @@
     <ItemGroup>
       <Folder Include="Infrastructure\Grpc\" />
       <Folder Include="Infrastructure\Persistence\Context\" />
-      <Folder Include="Startup\" />
     </ItemGroup>
 
     <ItemGroup>

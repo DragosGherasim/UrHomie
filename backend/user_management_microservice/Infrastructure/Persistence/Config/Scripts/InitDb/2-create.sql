@@ -22,7 +22,7 @@ CREATE TABLE service_provider (
     education                       VARCHAR(255)    NOT NULL,
     certifications                  VARCHAR(255)    NOT NULL,
     experience_descriptions         TEXT            NOT NULL,
-    work_schedule                   VARCHAR(255)    NOT NULL,
+    work_schedule                   VARCHAR(64)     NOT NULL,
     coverage_area                   TINYINT         NOT NULL,
     
     FOREIGN KEY (user_profile_id) REFERENCES user_profile(id) ON DELETE CASCADE

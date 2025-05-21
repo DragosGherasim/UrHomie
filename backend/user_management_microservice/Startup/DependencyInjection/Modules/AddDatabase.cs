@@ -1,8 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using user_management_microservice.Infrastructure.Persistence.Context;
-using user_management_microservice.Startup.DependencyInjection.Configurations;
+using user_management_microservice.Startup.DependencyInjection.ConfigBindings;
 
-namespace user_management_microservice.Startup.DependencyInjection;
+namespace user_management_microservice.Startup.DependencyInjection.Modules;
 
 public static class AddDatabase
 {

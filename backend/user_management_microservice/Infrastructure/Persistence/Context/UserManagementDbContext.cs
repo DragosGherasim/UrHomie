@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using user_management_microservice.Domain.Entities;
 using ServiceProvider = user_management_microservice.Domain.Entities.ServiceProvider;
 

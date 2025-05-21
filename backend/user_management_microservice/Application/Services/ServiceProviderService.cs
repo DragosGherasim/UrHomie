@@ -13,10 +13,10 @@ public class ServiceProviderService(
     public async Task<ServiceProvider?> AddServiceProviderAsync(CreateUserProfileMessage providerProfile)
     {
         var serviceProvider = ServiceProviderMapper.CreateUserProfileToServiceProvider(providerProfile);
-        
+
         return await serviceProviderRepository.CreateAsync(serviceProvider);
     }
-    
+
     public async Task<ServiceProvider?> GetServiceProviderAsync(long id)
     {
         return await serviceProviderRepository.ReadById(id);

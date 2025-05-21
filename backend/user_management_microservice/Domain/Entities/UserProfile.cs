@@ -1,6 +1,6 @@
 ﻿namespace user_management_microservice.Domain.Entities;
 
-public partial class UserProfile
+public class UserProfile
 {
     public long Id { get; set; }
 

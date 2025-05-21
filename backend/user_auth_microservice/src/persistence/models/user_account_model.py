@@ -4,7 +4,6 @@ from enum import Enum
 from .base_model import BaseModel
 
 class RoleEnum(str, Enum):
-    ADMIN = "ADMIN"
     CLIENT = "CLIENT"
     SERVICE_PROVIDER = "SERVICE_PROVIDER"
 

@@ -1,6 +1,6 @@
 ﻿namespace user_management_microservice.Domain.Entities;
 
-public partial class ServiceProvider
+public class ServiceProvider
 {
     public long Id { get; set; }
 

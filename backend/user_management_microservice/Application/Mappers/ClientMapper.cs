@@ -30,8 +30,8 @@ public static class ClientMapper
     public static ClientDto ClientToDto(Client client)
     {
         var userProfile = client.UserProfile;
-        
-        return new ClientDto()
+
+        return new ClientDto
         {
             Id = client.Id,
             Email = userProfile.Email,

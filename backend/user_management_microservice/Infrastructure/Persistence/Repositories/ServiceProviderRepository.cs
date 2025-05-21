@@ -5,7 +5,7 @@ using ServiceProvider = user_management_microservice.Domain.Entities.ServiceProv
 
 namespace user_management_microservice.Infrastructure.Persistence.Repositories;
 
-public class ServiceProviderRepository(UserManagementDbContext context): IServiceProviderRepository
+public class ServiceProviderRepository(UserManagementDbContext context) : IServiceProviderRepository
 {
     public async Task<ServiceProvider?> CreateAsync(ServiceProvider serviceProvider)
     {

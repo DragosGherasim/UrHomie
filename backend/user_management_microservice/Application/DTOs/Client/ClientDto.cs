@@ -3,7 +3,7 @@ namespace user_management_microservice.Application.DTOs.Client;
 public class ClientDto
 {
     public long Id { get; set; }
-    
+
     public string Email { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;

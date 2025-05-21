@@ -1,67 +1,61 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Serilog;
-using user_management_microservice.Authorization;
-using user_management_microservice.Authorization.Client;
-using user_management_microservice.Authorization.ServiceProvider;
-using user_management_microservice.Infrastructure.Grpc.Protos;
 using user_management_microservice.Middleware;
 using user_management_microservice.Startup.DependencyInjection;
-using user_management_microservice.Startup.DependencyInjection.Configurations;
+using user_management_microservice.Startup.DependencyInjection.ConfigBindings;
+using user_management_microservice.Startup.DependencyInjection.Modules;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ---- Serilog config ----
+// ---------------------------
+// Logging Configuration (Serilog)
+// ---------------------------
 builder.Host.UseSerilog((context, configuration) =>
     configuration.ReadFrom.Configuration(context.Configuration));
 
-// ---- Config from appsettings ----
+// ---------------------------
+// Bind configuration sections to strongly-typed settings
+// ---------------------------
 builder.Services.Configure<RabbitMqSettings>(
     builder.Configuration.GetSection("RabbitMq"));
 builder.Services.Configure<MariadbSettings>(
     builder.Configuration.GetSection("Mariadb"));
 
-// ---- Internal service dependencies ----
+// ---------------------------
+// Register application-specific services
+// ---------------------------
 builder.Services
     .AddDatabaseServices(builder.Configuration)
     .AddCoreServices()
     .AddRabbitMq(builder.Configuration);
 
-// gRPC client către serverul Python user-auth
-builder.Services.AddGrpcClient<UserAuthentication.UserAuthenticationClient>(options =>
-{
-    options.Address = new Uri("http://user-auth-envoy-proxy:8000"); // adresa corectă către serverul Python gRPC
-});
-builder.Services.AddScoped<IGrpcAuthClient, GrpcAuthClient>();
+// ---------------------------
+// Register infrastructure and communication dependencies
+// ---------------------------
+builder.Services.AddGrpcClients(builder.Configuration);
+builder.Services.AddAuthorizationPolicies();
+builder.Services.AddCustomAuthentication();
 
-// Politica SameClientOnly (client autenticat + propriul ID)
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("SameClientOnly", policy =>
-        policy.Requirements.Add(new SameClientRequirement()))
-    .AddPolicy("SameServiceProviderOnly", policy =>
-        policy.Requirements.Add(new SameServiceProviderRequirement()));
-
-builder.Services.AddSingleton<IAuthorizationHandler, SameClientHandler>();
-builder.Services.AddSingleton<IAuthorizationHandler, SameServiceProviderHandler>();
-
-builder.Services.AddAuthentication("ExternalJwt")
-    .AddScheme<AuthenticationSchemeOptions, DummyExternalJwtHandler>("ExternalJwt", options => {});
-
-
-// ---- Controller + Swagger ----
+// ---------------------------
+// Controllers and Swagger/OpenAPI
+// ---------------------------
 builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// ---- Middleware & Endpoints ----
+// ---------------------------
+// Development-only Middleware
+// ---------------------------
 if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 
+// ---------------------------
+// HTTP Pipeline configuration
+// ---------------------------
 app.UseSerilogRequestLogging();
 app.UseHttpsRedirection();
 
-// Middleware pentru validarea JWT prin gRPC
+// JWT validation using external gRPC middleware
 app.UseMiddleware<ExternalJwtValidationMiddleware>();
 
 app.UseAuthorization();

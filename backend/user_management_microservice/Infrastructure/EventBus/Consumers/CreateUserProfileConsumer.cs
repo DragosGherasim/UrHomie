@@ -55,7 +55,7 @@ public class CreateUserProfileConsumer(
                 logger.LogInformation("Detected user as ServiceProvider. Attempting to create...");
 
                 var serviceProvider = await serviceProviderService.AddServiceProviderAsync(message);
-                
+
                 if (serviceProvider is not null)
                 {
                     logger.LogInformation("Service Provider successfully created for UserId={UserId}", message.UserId);
@@ -81,7 +81,7 @@ public class CreateUserProfileConsumer(
             else
             {
                 logger.LogWarning("Invalid user type: neither client nor service provider.");
-                
+
                 await publishEndpoint.Publish(new UserProfileCreationFailed
                 {
                     CorrelationId = context.CorrelationId!.Value,

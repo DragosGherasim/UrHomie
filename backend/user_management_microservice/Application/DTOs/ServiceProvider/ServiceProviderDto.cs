@@ -3,7 +3,7 @@ namespace user_management_microservice.Application.DTOs.ServiceProvider;
 public class ServiceProviderDto
 {
     public long Id { get; set; }
-    
+
     public string Email { get; set; } = null!;
 
     public string FirstName { get; set; } = null!;
@@ -17,7 +17,7 @@ public class ServiceProviderDto
     public string City { get; set; } = null!;
 
     public string Address { get; set; } = null!;
-    
+
     public string Education { get; set; } = null!;
 
     public string Certifications { get; set; } = null!;

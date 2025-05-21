@@ -1,5 +1,0 @@
-using Microsoft.AspNetCore.Authorization;
-
-namespace user_management_microservice.Authorization.ServiceProvider;
-
-public class SameServiceProviderRequirement: IAuthorizationRequirement;

@@ -23,7 +23,7 @@ public static class ServiceProviderMapper
                 PhoneNumber = message.PhoneNumber,
                 Country = message.Country,
                 City = message.City,
-                Address = message.Address,
+                Address = message.Address
             },
 
             Education = message.ServiceProvider!.Education,
@@ -37,8 +37,8 @@ public static class ServiceProviderMapper
     public static ServiceProviderDto ServiceProviderToDto(ServiceProvider serviceProvider)
     {
         var userProfile = serviceProvider.UserProfile;
-        
-        return new ServiceProviderDto()
+
+        return new ServiceProviderDto
         {
             Id = serviceProvider.Id,
             Email = userProfile.Email,
@@ -53,6 +53,6 @@ public static class ServiceProviderMapper
             ExperienceDescriptions = serviceProvider.ExperienceDescriptions,
             WorkSchedule = serviceProvider.WorkSchedule,
             CoverageArea = serviceProvider.CoverageArea
-        }; 
+        };
     }
 }

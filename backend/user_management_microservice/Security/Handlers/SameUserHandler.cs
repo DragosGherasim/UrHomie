@@ -1,11 +1,12 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using user_management_microservice.Security.Requirements;
 
-namespace user_management_microservice.Authorization.ServiceProvider;
+namespace user_management_microservice.Security.Handlers;
 
-public class SameServiceProviderHandler: AuthorizationHandler<SameServiceProviderRequirement>
+public class SameUserHandler : AuthorizationHandler<SameUserRequirement>
 {
-    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SameServiceProviderRequirement requirement)
+    protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, SameUserRequirement requirement)
     {
         if (context.Resource is not HttpContext httpContext)
             return Task.CompletedTask;
@@ -17,7 +18,8 @@ public class SameServiceProviderHandler: AuthorizationHandler<SameServiceProvide
         if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(routeId))
             return Task.CompletedTask;
 
-        if (role?.ToUpperInvariant() == "SERVICE_PROVIDER" && userIdClaim == routeId)
+        if ((role?.ToUpperInvariant()!).Equals(requirement.RequiredRole, StringComparison.InvariantCultureIgnoreCase) &&
+            userIdClaim == routeId)
             context.Succeed(requirement);
 
         return Task.CompletedTask;
