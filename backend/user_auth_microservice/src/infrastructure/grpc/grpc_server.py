@@ -1,9 +1,10 @@
 import grpc
+
 from src.shared.logger import get_logger
 from src.business.services.grpc.user_auth_service import UserAuthServer
 from src.persistence.repositories.user_account_repo import UserAccountRepository
 from src.business.services.jwt.jwt_service import JwtService
-from infrastructure.messaging.profile_event_bus import ProfileEventBus
+from src.infrastructure.messaging.profile_event_bus import ProfileEventBus
 from src.business.services.saga.saga_manager import SagaManager
 from src.business.services.grpc.compiled_protos import user_auth_pb2_grpc
 

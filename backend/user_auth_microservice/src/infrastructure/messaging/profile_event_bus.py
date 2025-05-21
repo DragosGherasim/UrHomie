@@ -4,7 +4,7 @@ from typing import Any, Dict, Callable, Awaitable, List
 from aio_pika.abc import AbstractIncomingMessage
 from aio_pika.exceptions import AMQPConnectionError
 
-from shared.env_config import Settings
+from src.shared.env_config import Settings
 from src.shared.logger import get_logger
 
 logger = get_logger(__name__)

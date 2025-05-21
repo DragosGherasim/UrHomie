@@ -2,7 +2,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 import redis.asyncio as redis
 import asyncio
 
-from shared.env_config import Settings
+from src.shared.env_config import Settings
 from src.shared.logger import get_logger
 
 logger = get_logger(__name__)

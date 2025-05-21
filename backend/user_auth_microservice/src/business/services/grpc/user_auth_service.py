@@ -24,8 +24,8 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
             logger.warning(f"Authentication failed for email: {email}.")
             return user_auth_pb2.LogInResponse(jwt="", error_message="Invalid email or password!")
 
-        access_token = self.jwt_service.generate_token(user, expires_in=900)  # 15 minute
-        refresh_token = self.jwt_service.generate_token(user, expires_in=604800, refresh=True)  # 7 zile
+        access_token = self.jwt_service.generate_token(user, expires_in=900)
+        refresh_token = self.jwt_service.generate_token(user, expires_in=604800, refresh=True)
 
         await context.send_initial_metadata((
             ('set-cookie', f'refresh_token={refresh_token}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax'),
@@ -135,4 +135,4 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
             ('set-cookie', 'refresh_token=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax'),
         ))
         logger.info("User logged out. Refresh token cleared.")
-        return user_auth_pb2.LogInResponse(jwt="", error_message="Logged out")
+        return user_auth_pb2.Empty()

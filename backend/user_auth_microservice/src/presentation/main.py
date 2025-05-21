@@ -1,5 +1,4 @@
 import asyncio
-import uvicorn
 from uvicorn.config import Config
 from uvicorn.server import Server
 

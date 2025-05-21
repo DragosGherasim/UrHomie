@@ -57,7 +57,7 @@ class UserAuthenticationStub(object):
         self.LogOut = channel.unary_unary(
                 '/UserAuthentication/LogOut',
                 request_serializer=user__auth__pb2.Empty.SerializeToString,
-                response_deserializer=user__auth__pb2.LogInResponse.FromString,
+                response_deserializer=user__auth__pb2.Empty.FromString,
                 _registered_method=True)
 
 
@@ -120,7 +120,7 @@ def add_UserAuthenticationServicer_to_server(servicer, server):
             'LogOut': grpc.unary_unary_rpc_method_handler(
                     servicer.LogOut,
                     request_deserializer=user__auth__pb2.Empty.FromString,
-                    response_serializer=user__auth__pb2.LogInResponse.SerializeToString,
+                    response_serializer=user__auth__pb2.Empty.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -257,7 +257,7 @@ class UserAuthentication(object):
             target,
             '/UserAuthentication/LogOut',
             user__auth__pb2.Empty.SerializeToString,
-            user__auth__pb2.LogInResponse.FromString,
+            user__auth__pb2.Empty.FromString,
             options,
             channel_credentials,
             insecure,

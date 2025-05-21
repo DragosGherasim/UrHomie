@@ -5,7 +5,7 @@ service UserAuthentication {
   rpc ValidateJwt(ValidateJwtRequest) returns (ValidateJwtResponse);
   rpc SignUp(SignUpRequest) returns (SignUpResponse);
   rpc RefreshToken(Empty) returns (LogInResponse);
-  rpc LogOut(Empty) returns (LogInResponse);
+  rpc LogOut(Empty) returns (Empty);
 }
 
 message LogInRequest {

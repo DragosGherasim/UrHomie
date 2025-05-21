@@ -11,6 +11,7 @@ class JwtService:
     def __init__(self, secret_key=Settings.JWT_SECRET_KEY, issuer=Settings.JWT_ISSUER):
         if not secret_key:
             raise RuntimeError("JWT_SECRET_KEY is not set in environment!")
+
         self.secret_key = secret_key
         self.issuer = issuer
         self.user_repo = UserAccountRepository()

@@ -215,28 +215,28 @@ export class UserAuthenticationClient {
     '/UserAuthentication/LogOut',
     grpcWeb.MethodType.UNARY,
     user_auth_pb.Empty,
-    user_auth_pb.LogInResponse,
+    user_auth_pb.Empty,
     (request: user_auth_pb.Empty) => {
       return request.serializeBinary();
     },
-    user_auth_pb.LogInResponse.deserializeBinary
+    user_auth_pb.Empty.deserializeBinary
   );
 
   logOut(
     request: user_auth_pb.Empty,
-    metadata?: grpcWeb.Metadata | null): Promise<user_auth_pb.LogInResponse>;
+    metadata?: grpcWeb.Metadata | null): Promise<user_auth_pb.Empty>;
 
   logOut(
     request: user_auth_pb.Empty,
     metadata: grpcWeb.Metadata | null,
     callback: (err: grpcWeb.RpcError,
-               response: user_auth_pb.LogInResponse) => void): grpcWeb.ClientReadableStream<user_auth_pb.LogInResponse>;
+               response: user_auth_pb.Empty) => void): grpcWeb.ClientReadableStream<user_auth_pb.Empty>;
 
   logOut(
     request: user_auth_pb.Empty,
     metadata?: grpcWeb.Metadata | null,
     callback?: (err: grpcWeb.RpcError,
-               response: user_auth_pb.LogInResponse) => void) {
+               response: user_auth_pb.Empty) => void) {
     if (callback !== undefined) {
       return this.client_.rpcCall(
         this.hostname_ +
