@@ -18,21 +18,60 @@ public class ServiceProviderController(
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetServiceProviderById([FromRoute] long id)
     {
-        logger.LogInformation("Attempting to fetch service provider with ID: {ServiceProvider}", id);
+        logger.LogInformation("GET request received for service provider with ID {ServiceProviderId}", id);
 
-        var serviceProvider = await serviceProviderService.GetServiceProviderAsync(id);
-
-        if (serviceProvider == null)
+        try
         {
-            logger.LogWarning("Service provider with ID {Id} not found.", id);
-            return NotFound();
+            var serviceProvider = await serviceProviderService.GetServiceProviderAsync(id);
+
+            if (serviceProvider == null)
+            {
+                logger.LogWarning("GET failed: Service provider with ID {ServiceProviderId} not found", id);
+                return NotFound();
+            }
+
+            var dto = ServiceProviderMapper.ServiceProviderToDto(serviceProvider);
+            logger.LogInformation("GET succeeded: Service provider with ID {ServiceProviderId} retrieved", id);
+            return Ok(dto);
         }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "GET failed for service provider with ID {ServiceProviderId}: {Error}", id, ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        }
+    }
+    
+    [HttpPatch("{id:long}")]
+    [Authorize(Policy = "SameServiceProviderOnly")]
+    [ProducesResponseType(typeof(ServiceProviderDto), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> PatchServiceProvider([FromRoute] long id, [FromBody] UpdateServiceProviderDto dto)
+    {
+        logger.LogInformation("PATCH request received for service provider with ID {ServiceProviderId}", id);
 
-        logger.LogInformation("Service provider with ID {ServiceProviderId} successfully retrieved.", id);
+        try
+        {
+            var updated = await serviceProviderService.UpdateServiceProviderAsync(id, dto);
+            if (updated == null)
+            {
+                logger.LogWarning("PATCH failed: Service provider with ID {ServiceProviderId} not found", id);
+                return NotFound();
+            }
 
-        var serviceProviderDto = ServiceProviderMapper.ServiceProviderToDto(serviceProvider);
-        return Ok(serviceProviderDto);
+            var resultDto = ServiceProviderMapper.ServiceProviderToDto(updated);
+            logger.LogInformation("PATCH succeeded: Service provider with ID {ServiceProviderId} updated", id);
+            return Ok(resultDto);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "PATCH failed for service provider with ID {ServiceProviderId}: {Error}", id, ex.Message);
+            return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
+        }
     }
 }

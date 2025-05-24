@@ -1,3 +1,4 @@
+using user_management_microservice.Application.DTOs.Client;
 using user_management_microservice.Domain.Entities;
 using user_management_microservice.Infrastructure.EventBus.Messages;
 
@@ -7,4 +8,5 @@ public interface IClientService
 {
     Task<Client?> GetClientAsync(long clientId);
     Task<Client?> AddClientAsync(CreateUserProfileMessage clientProfile);
+    Task<Client?> UpdateClientAsync(long id, UpdateClientDto dto);
 }

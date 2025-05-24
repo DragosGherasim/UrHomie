@@ -5,5 +5,6 @@ namespace user_management_microservice.Domain.Repositories;
 public interface IClientRepository
 {
     Task<Client?> CreateAsync(Client client);
+    Task<Client> UpdateAsync(Client client);
     Task<Client?> ReadById(long id);
 }

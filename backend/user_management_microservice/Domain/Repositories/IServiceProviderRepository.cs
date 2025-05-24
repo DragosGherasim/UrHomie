@@ -6,4 +6,5 @@ public interface IServiceProviderRepository
 {
     Task<ServiceProvider?> CreateAsync(ServiceProvider serviceProvider);
     Task<ServiceProvider?> ReadById(long id);
+    Task<ServiceProvider?> UpdateAsync(ServiceProvider serviceProvider);
 }

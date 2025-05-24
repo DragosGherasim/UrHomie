@@ -25,4 +25,15 @@ public class ServiceProviderRepository(UserManagementDbContext context) : IServi
             .Include(c => c.UserProfile)
             .FirstOrDefaultAsync(x => x.Id == id);
     }
+
+    public async Task<ServiceProvider?> UpdateAsync(ServiceProvider serviceProvider)
+    {
+        await using var transaction = await context.Database.BeginTransactionAsync();
+        
+        await context.SaveChangesAsync();
+        
+        await transaction.CommitAsync();
+        
+        return serviceProvider;
+    }
 }

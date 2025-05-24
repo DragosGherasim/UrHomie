@@ -18,11 +18,17 @@ public class ClientRepository(UserManagementDbContext context) : IClientReposito
 
         return client;
     }
-
+    
     public async Task<Client?> ReadById(long id)
     {
         return await context.Clients
             .Include(c => c.UserProfile)
             .FirstOrDefaultAsync(x => x.Id == id);
+    }
+    
+    public async Task<Client> UpdateAsync(Client client)
+    {
+        await context.SaveChangesAsync();
+        return client;
     }
 }

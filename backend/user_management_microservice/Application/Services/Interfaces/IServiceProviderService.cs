@@ -1,3 +1,4 @@
+using user_management_microservice.Application.DTOs.ServiceProvider;
 using user_management_microservice.Infrastructure.EventBus.Messages;
 using ServiceProvider = user_management_microservice.Domain.Entities.ServiceProvider;
 
@@ -7,4 +8,5 @@ public interface IServiceProviderService
 {
     Task<ServiceProvider?> GetServiceProviderAsync(long serviceProviderId);
     Task<ServiceProvider?> AddServiceProviderAsync(CreateUserProfileMessage providerProfile);
+    Task<ServiceProvider?> UpdateServiceProviderAsync(long id, UpdateServiceProviderDto dto);
 }
