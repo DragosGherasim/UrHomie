@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { authClient } from "../services/grpc/authClient";
-import { Empty, LogInRequest, ValidateJwtRequest } from "../services/grpc/proto/user_auth_pb";
+
+import { authClient } from "../services/grpc/clients/authClient";
+import { Empty, LogInRequest } from "../services/grpc/proto/user_auth_pb";
+import { clearSession, validateAndStoreJwt } from "../utils/authContextUtils";
 
 interface AuthContextProps {
   accessToken: string | null;
@@ -34,9 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const refresh = new Empty();
     authClient.refreshToken(refresh, {}, (err, resp) => {
       if (err || !resp.getJwt()) {
-        setAccessToken(null);
-        setRole(null);
-        setUserId(null);
+        clearSession(setAccessToken, setRole, setUserId);
         setLoading(false);
         return;
       }
@@ -44,22 +44,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const jwt = resp.getJwt();
       setAccessToken(jwt);
 
-      const validateReq = new ValidateJwtRequest();
-      validateReq.setJwt(jwt);
-
-      authClient.validateJwt(validateReq, {}, (err2, validateResp) => {
-        if (!err2 && validateResp.getIsValid()) {
-          const extractedRole = validateResp.getRole().toLowerCase();
-          const extractedId = validateResp.getSub();
-
-          if (extractedRole === "client" || extractedRole === "service_provider") {
-            setRole(extractedRole);
-            setUserId(extractedId);
-            sessionStorage.setItem("user_role", extractedRole);
-          }
-        }
-        setLoading(false);
-      });
+      validateAndStoreJwt(jwt, setRole, setUserId, undefined, () => setLoading(false));
     });
   }, []);
 
@@ -73,46 +58,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     req.setPassword(password);
 
     authClient.logIn(req, {}, (err, resp) => {
-      if (err) {
-        onError("Authentication service is currently unavailable. Please try again later.");
-        return;
-      }
-
-      if (resp.getErrorMessage()) {
-        onError(resp.getErrorMessage());
+      if (err || resp.getErrorMessage()) {
+        onError(err?.message || resp.getErrorMessage() || "Login failed");
         return;
       }
 
       const jwt = resp.getJwt();
       setAccessToken(jwt);
 
-      const validateReq = new ValidateJwtRequest();
-      validateReq.setJwt(jwt);
-
-      authClient.validateJwt(validateReq, {}, (err2, validateResp) => {
-        if (!err2 && validateResp.getIsValid()) {
-          const extractedRole = validateResp.getRole().toLowerCase();
-          const extractedId = validateResp.getSub();
-
-          if (extractedRole === "client" || extractedRole === "service_provider") {
-            setRole(extractedRole);
-            setUserId(extractedId);
-            sessionStorage.setItem("user_role", extractedRole);
-          }
-        }
-
-        navigate("/home");
-      });
+      validateAndStoreJwt(jwt, setRole, setUserId, () => navigate("/home"));
     });
   };
 
   const logout = () => {
-    const req = new Empty();
-    authClient.logOut(req, {}, () => {
-      setAccessToken(null);
-      setRole(null);
-      setUserId(null);
-      sessionStorage.removeItem("user_role");
+    authClient.logOut(new Empty(), {}, () => {
+      clearSession(setAccessToken, setRole, setUserId);
       navigate("/login");
     });
   };

@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { Navigate } from "react-router-dom";
-import LoadingSpinner from "../components/LoadingSpinner";
+import LoadingSpinner from "../components/ui/LoadingSpinner";
 
 const ProtectedRoute = ({ children }: { children: React.JSX.Element }) => {
   const { isAuthenticated, loading } = useAuth();

@@ -1,5 +1,5 @@
 import React from "react";
-import { formatLabel } from "../../utils/formatters"; 
+import { formatLabel } from "../../utils/formattersUtils"; 
 
 interface ClientProfileFormProps {
   formData: {

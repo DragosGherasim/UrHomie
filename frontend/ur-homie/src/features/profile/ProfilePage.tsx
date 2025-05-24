@@ -1,11 +1,17 @@
+// src/features/profile/ProfilePage.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import heroImage from "../../assets/images/hero.png";
-import LoadingSpinner from "../../components/LoadingSpinner";
+
+import heroClient from "../../assets/images/hero-client.png";
+import heroProvider from "../../assets/images/hero-serv-prov.png";
+
+import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ClientProfileForm from "./ClientProfileForm";
 import ServiceProviderProfileForm from "./ServiceProviderProfileForm";
+
+import { fetchUserProfile } from "../../services/api/userProfileApi";
+import { toast } from "react-hot-toast";
 
 const ProfilePage = () => {
   const { accessToken, isAuthenticated, userId, role } = useAuth();
@@ -14,37 +20,34 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const navigate = useNavigate();
 
+  const backgroundImage = role === "client" ? heroClient : heroProvider;
+
   useEffect(() => {
-    const fetchProfile = async () => {
+    const loadProfile = async () => {
       try {
-        const endpoint =
-          role === "client"
-            ? `client/${userId}`
-            : `service-provider/${userId}`;
+        const data = await fetchUserProfile(userId!, role!, accessToken!);
+        setFormData(data);
+        setOriginalData(data);
+      } catch (err: any) {
+        const msg = err.message;
 
-        const response = await axios.get(
-          `http://localhost:80/api/user-management/${endpoint}`,
-          {
-            headers: {
-              Authorization: `Bearer ${accessToken}`,
-            },
-          }
-        );
+        if (msg === "unauthorized") toast.error("You must be logged in.");
+        else if (msg === "forbidden") toast.error("You don't have permission to access this profile.");
+        else if (msg === "not_found") toast.error("Profile not found.");
+        else toast.error("Something went wrong. Please try again later.");
 
-        console.log("Received profile:", response.data);
-        setFormData(response.data);
-        setOriginalData(response.data);
-      } catch {
         navigate("/home");
       }
     };
 
     if (isAuthenticated && accessToken && userId) {
-      fetchProfile();
+      loadProfile();
     }
   }, [isAuthenticated, accessToken, userId, navigate, role]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     if (isEditing) {
       setFormData((prev: any) => (prev ? { ...prev, [name]: value } : prev));
@@ -64,8 +67,8 @@ const ProfilePage = () => {
 
   return (
     <div
-      className="relative w-full h-screen bg-cover bg-center"
-      style={{ backgroundImage: `url(${heroImage})` }}
+      className="relative w-full h-screen bg-cover bg-[center_40%]"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
     >
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm z-0" />
 
