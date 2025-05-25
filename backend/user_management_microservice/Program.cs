@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Serilog;
 using user_management_microservice.Middleware;
-using user_management_microservice.Startup.DependencyInjection;
 using user_management_microservice.Startup.DependencyInjection.ConfigBindings;
 using user_management_microservice.Startup.DependencyInjection.Modules;
 
@@ -35,10 +35,28 @@ builder.Services.AddGrpcClients(builder.Configuration);
 builder.Services.AddAuthorizationPolicies();
 builder.Services.AddCustomAuthentication();
 
+
 // ---------------------------
 // Controllers and Swagger/OpenAPI
 // ---------------------------
-builder.Services.AddControllers();
+builder.Services
+    .AddControllers()
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+        {
+            var errors = context.ModelState
+                .Where(e => e.Value?.Errors.Count > 0)
+                .ToDictionary(
+                    kvp => kvp.Key,
+                    kvp => kvp.Value!.Errors.Select(e => e.ErrorMessage).ToArray()
+                );
+
+            return new UnprocessableEntityObjectResult(new { errors });
+        };
+    });
+
+builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

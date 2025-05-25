@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using user_management_microservice.Application.DTOs.ServiceProvider;
 using user_management_microservice.Application.Mappers;
 using user_management_microservice.Application.Services.Interfaces;
+using user_management_microservice.Presentation.Extensions;
 
 namespace user_management_microservice.Presentation.Controllers;
 
@@ -43,21 +45,38 @@ public class ServiceProviderController(
             return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
         }
     }
-    
+
     [HttpPatch("{id:long}")]
     [Authorize(Policy = "SameServiceProviderOnly")]
     [ProducesResponseType(typeof(ServiceProviderDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> PatchServiceProvider([FromRoute] long id, [FromBody] UpdateServiceProviderDto dto)
     {
         logger.LogInformation("PATCH request received for service provider with ID {ServiceProviderId}", id);
 
+        var hasAtLeastOne = dto.HasAtLeastOnePopulatedField();
+
+        if (!ModelState.IsValid || !hasAtLeastOne)
+        {
+            var errors = ModelState.ToErrorDictionary();
+
+            if (!hasAtLeastOne)
+                errors.TryAdd("general", ["At least one field must be provided."]);
+
+            logger.LogWarning("Validation failed for service provider PATCH {ServiceProviderId}: {@Errors}", id,
+                errors);
+            return UnprocessableEntity(new { errors });
+        }
+
         try
         {
             var updated = await serviceProviderService.UpdateServiceProviderAsync(id, dto);
+
             if (updated == null)
             {
                 logger.LogWarning("PATCH failed: Service provider with ID {ServiceProviderId} not found", id);
@@ -68,9 +87,28 @@ public class ServiceProviderController(
             logger.LogInformation("PATCH succeeded: Service provider with ID {ServiceProviderId} updated", id);
             return Ok(resultDto);
         }
+        catch (DbUpdateException dbEx) when (dbEx.IsUniqueConstraintViolation())
+        {
+            logger.LogWarning(dbEx,
+                "PATCH conflict: unique constraint violation for service provider ID {ServiceProviderId}", id);
+            return Conflict(new
+            {
+                errors = (IDictionary<string, string[]>)new Dictionary<string, string[]>
+                {
+                    { "PhoneNumber", ["Phone number already in use."] }
+                }
+            });
+        }
+        catch (DbUpdateException dbEx)
+        {
+            logger.LogError(dbEx,
+                "PATCH failed due to database update error for service provider ID {ServiceProviderId}", id);
+            return StatusCode(StatusCodes.Status500InternalServerError, "A database error occurred.");
+        }
         catch (Exception ex)
         {
-            logger.LogError(ex, "PATCH failed for service provider with ID {ServiceProviderId}: {Error}", id, ex.Message);
+            logger.LogError(ex, "PATCH failed for service provider with ID {ServiceProviderId}: {Error}", id,
+                ex.Message);
             return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
         }
     }
