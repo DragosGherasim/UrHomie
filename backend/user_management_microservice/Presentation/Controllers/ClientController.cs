@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using user_management_microservice.Application.DTOs.Client;
 using user_management_microservice.Application.Mappers;
 using user_management_microservice.Application.Services.Interfaces;
-using user_management_microservice.Presentation.Extensions;
+using user_management_microservice.Utils;
 
 namespace user_management_microservice.Presentation.Controllers;
 
@@ -36,6 +36,7 @@ public class ClientController(
             }
 
             var clientDto = ClientMapper.ClientToDto(client);
+
             logger.LogInformation("GET succeeded: Client with ID {ClientId} retrieved successfully", id);
             return Ok(clientDto);
         }
@@ -64,8 +65,10 @@ public class ClientController(
         if (!ModelState.IsValid || !hasAtLeastOne)
         {
             var errors = ModelState.ToErrorDictionary();
+
             if (!hasAtLeastOne)
                 errors.TryAdd("general", ["At least one field must be provided."]);
+
             return UnprocessableEntity(new { errors = (Dictionary<string, string[]>)errors });
         }
 
@@ -80,12 +83,14 @@ public class ClientController(
             }
 
             var dtoResult = ClientMapper.ClientToDto(updatedClient);
+
             logger.LogInformation("PATCH succeeded: Client with ID {ClientId} updated", id);
             return Ok(dtoResult);
         }
         catch (DbUpdateException dbEx) when (dbEx.IsUniqueConstraintViolation())
         {
             logger.LogWarning(dbEx, "PATCH conflict: unique constraint violation for client ID {ClientId}", id);
+
             return Conflict(new
             {
                 errors = new Dictionary<string, string[]>
@@ -93,11 +98,6 @@ public class ClientController(
                     { "PhoneNumber", ["Phone number already in use."] }
                 }
             });
-        }
-        catch (DbUpdateException dbEx)
-        {
-            logger.LogError(dbEx, "PATCH failed due to database update error for client ID {ClientId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, "A database error occurred.");
         }
         catch (Exception ex)
         {

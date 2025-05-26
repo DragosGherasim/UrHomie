@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using user_management_microservice.Application.DTOs.ServiceProvider;
 using user_management_microservice.Application.Mappers;
 using user_management_microservice.Application.Services.Interfaces;
-using user_management_microservice.Presentation.Extensions;
+using user_management_microservice.Utils;
 
 namespace user_management_microservice.Presentation.Controllers;
 
@@ -36,6 +36,7 @@ public class ServiceProviderController(
             }
 
             var dto = ServiceProviderMapper.ServiceProviderToDto(serviceProvider);
+            
             logger.LogInformation("GET succeeded: Service provider with ID {ServiceProviderId} retrieved", id);
             return Ok(dto);
         }
@@ -70,6 +71,7 @@ public class ServiceProviderController(
 
             logger.LogWarning("Validation failed for service provider PATCH {ServiceProviderId}: {@Errors}", id,
                 errors);
+            
             return UnprocessableEntity(new { errors });
         }
 
@@ -85,12 +87,14 @@ public class ServiceProviderController(
 
             var resultDto = ServiceProviderMapper.ServiceProviderToDto(updated);
             logger.LogInformation("PATCH succeeded: Service provider with ID {ServiceProviderId} updated", id);
+            
             return Ok(resultDto);
         }
         catch (DbUpdateException dbEx) when (dbEx.IsUniqueConstraintViolation())
         {
             logger.LogWarning(dbEx,
                 "PATCH conflict: unique constraint violation for service provider ID {ServiceProviderId}", id);
+            
             return Conflict(new
             {
                 errors = (IDictionary<string, string[]>)new Dictionary<string, string[]>
@@ -99,16 +103,11 @@ public class ServiceProviderController(
                 }
             });
         }
-        catch (DbUpdateException dbEx)
-        {
-            logger.LogError(dbEx,
-                "PATCH failed due to database update error for service provider ID {ServiceProviderId}", id);
-            return StatusCode(StatusCodes.Status500InternalServerError, "A database error occurred.");
-        }
         catch (Exception ex)
         {
             logger.LogError(ex, "PATCH failed for service provider with ID {ServiceProviderId}: {Error}", id,
                 ex.Message);
+            
             return StatusCode(StatusCodes.Status500InternalServerError, "An unexpected error occurred.");
         }
     }

@@ -90,8 +90,6 @@ const GeneralInformationsForm: React.FC = () => {
 
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-green-50">
-      <Toaster />
-
       <form className="bg-white p-8 rounded shadow-md w-full max-w-2xl relative z-0">
         <h2 className="text-2xl font-bold mb-6 text-green-700 text-center">
           General Information

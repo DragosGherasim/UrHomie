@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.EntityFrameworkCore;
 
-namespace user_management_microservice.Presentation.Extensions;
+namespace user_management_microservice.Utils;
 
 public static class ValidationExtensions
 {

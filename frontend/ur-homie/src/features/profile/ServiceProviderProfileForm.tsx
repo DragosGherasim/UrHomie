@@ -17,10 +17,13 @@ interface ServiceProviderProfileFormProps {
     coverageArea: number;
   };
   isEditing: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
+  onChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => void;
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  errorMap?: Record<string, string[]>;
 }
 
 const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
@@ -30,6 +33,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
   onSubmit,
   onCancel,
   setIsEditing,
+  errorMap,
 }) => {
   return (
     <div className="relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden">
@@ -57,7 +61,6 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
         onSubmit={onSubmit}
         className="grid grid-cols-2 gap-6 max-h-[75vh] overflow-y-auto pr-[18px]"
       >
-        {/* Email */}
         <div className="col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
@@ -69,7 +72,6 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
           />
         </div>
 
-        {/* First Name */}
         <div className="col-span-1">
           <label className="block text-sm font-medium text-gray-700 mb-1">First Name</label>
           <input
@@ -80,13 +82,15 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
             onChange={onChange}
             className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
               isEditing
-                ? "border-gray-300 focus:ring-2 focus:ring-green-500"
+                ? `border-gray-300 focus:ring-2 focus:ring-green-500 ${errorMap?.firstName ? "border-red-500" : ""}`
                 : "border-transparent bg-gray-100 text-gray-600 cursor-text"
             }`}
           />
+          {errorMap?.firstName && (
+            <p className="text-sm text-red-500 mt-1">{errorMap.firstName[0]}</p>
+          )}
         </div>
 
-        {/* Restul câmpurilor */}
         {[
           "lastName",
           "phoneNumber",
@@ -104,7 +108,6 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
               {formatLabel(key)}
             </label>
 
-            {/* Certifications & ExperienceDescriptions: textarea auto-height */}
             {["certifications", "experienceDescriptions"].includes(key) ? (
               <textarea
                 name={key}
@@ -113,7 +116,7 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
                 onChange={onChange}
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none resize-none overflow-hidden ${
                   isEditing
-                    ? "border-gray-300 focus:ring-2 focus:ring-green-500"
+                    ? `border-gray-300 focus:ring-2 focus:ring-green-500 ${errorMap?.[key] ? "border-red-500" : ""}`
                     : "border-transparent bg-gray-100 text-gray-600 cursor-text"
                 }`}
                 style={{ height: "auto" }}
@@ -130,7 +133,9 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
                   name="coverageArea"
                   value={formData.coverageArea}
                   onChange={onChange}
-                  className="w-full px-4 py-2 border rounded-md focus:outline-none border-gray-300 focus:ring-2 focus:ring-green-500"
+                  className={`w-full px-4 py-2 border rounded-md focus:outline-none border-gray-300 focus:ring-2 focus:ring-green-500 ${
+                    errorMap?.coverageArea ? "border-red-500" : ""
+                  }`}
                 >
                   {[5, 25, 50, 100].map((area) => (
                     <option key={area} value={area}>
@@ -156,15 +161,18 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
                 onChange={onChange}
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
                   isEditing
-                    ? "border-gray-300 focus:ring-2 focus:ring-green-500"
+                    ? `border-gray-300 focus:ring-2 focus:ring-green-500 ${errorMap?.[key] ? "border-red-500" : ""}`
                     : "border-transparent bg-gray-100 text-gray-600 cursor-text"
                 }`}
               />
             )}
+
+            {errorMap?.[key] && (
+              <p className="text-sm text-red-500 mt-1">{errorMap[key][0]}</p>
+            )}
           </div>
         ))}
 
-        {/* Submit Button */}
         {isEditing && (
           <div className="col-span-2">
             <button

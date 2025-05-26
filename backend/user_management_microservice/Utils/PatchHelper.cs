@@ -16,13 +16,30 @@ public static class PatchHelper
         foreach (var srcProp in sourceProps)
         {
             if (!srcProp.CanRead) continue;
+
             var value = srcProp.GetValue(source);
             if (value == null) continue;
 
-            if (targetProps.TryGetValue(srcProp.Name, out var targetProp) &&
-                targetProp.CanWrite &&
-                targetProp.PropertyType == srcProp.PropertyType)
+            if (!targetProps.TryGetValue(srcProp.Name, out var targetProp) || !targetProp.CanWrite)
+                continue;
+
+            var sourceType = srcProp.PropertyType;
+            var targetType = targetProp.PropertyType;
+
+            if (targetType == sourceType)
+            {
                 targetProp.SetValue(target, value);
+            }
+            else
+            {
+                var underlyingSourceType = Nullable.GetUnderlyingType(sourceType);
+
+                if (underlyingSourceType == null || underlyingSourceType != targetType) continue;
+
+                var convertedValue = Convert.ChangeType(value, targetType);
+
+                targetProp.SetValue(target, convertedValue);
+            }
         }
     }
 }

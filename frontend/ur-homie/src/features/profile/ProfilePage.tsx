@@ -1,4 +1,3 @@
-// src/features/profile/ProfilePage.tsx
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
@@ -10,14 +9,17 @@ import LoadingSpinner from "../../components/ui/LoadingSpinner";
 import ClientProfileForm from "./ClientProfileForm";
 import ServiceProviderProfileForm from "./ServiceProviderProfileForm";
 
-import { fetchUserProfile } from "../../services/api/userProfileApi";
+import { fetchUserProfile } from "../../services/api/userProfile/fetch";
+import { patchUserProfile } from "../../services/api/userProfile/update";
 import { toast } from "react-hot-toast";
+import { buildPatchPayload } from "../../utils/buildPatchPayloadUtils";
 
 const ProfilePage = () => {
-  const { accessToken, isAuthenticated, userId, role } = useAuth();
+  const { accessToken, isAuthenticated, userId, role, logout } = useAuth();
   const [formData, setFormData] = useState<any>(null);
   const [originalData, setOriginalData] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [errorMap, setErrorMap] = useState<Record<string, string[]>>();
   const navigate = useNavigate();
 
   const backgroundImage = role === "client" ? heroClient : heroProvider;
@@ -32,11 +34,12 @@ const ProfilePage = () => {
         const msg = err.message;
 
         if (msg === "unauthorized") toast.error("You must be logged in.");
-        else if (msg === "forbidden") toast.error("You don't have permission to access this profile.");
+        else if (msg === "forbidden")
+          toast.error("You don't have permission to access this profile.");
         else if (msg === "not_found") toast.error("Profile not found.");
         else toast.error("Something went wrong. Please try again later.");
 
-        navigate("/home");
+        navigate("/landing");
       }
     };
 
@@ -46,7 +49,9 @@ const ProfilePage = () => {
   }, [isAuthenticated, accessToken, userId, navigate, role]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     const { name, value } = e.target;
     if (isEditing) {
@@ -54,15 +59,49 @@ const ProfilePage = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsEditing(false);
-    setOriginalData(formData);
+    setErrorMap(undefined);
+
+    const payload = buildPatchPayload(originalData, formData);
+
+    if (Object.keys(payload).length === 0) {
+      toast("No changes were made.");
+      setIsEditing(false);
+      return;
+    }
+
+    try {
+      const result = await patchUserProfile(
+        userId!,
+        role!,
+        payload,
+        accessToken!
+      );
+
+      if (!result.success) {
+        setErrorMap(result.errors || {});
+      } else {
+        setIsEditing(false);
+        setOriginalData(result.data);
+        setFormData(result.data);
+        toast.success("Your profile has been updated successfully!");
+      }
+    } catch (err: any) {
+      if (err.message === "unauthorized") {
+        toast.error("Your session has expired. Please log in again.");
+        logout();
+        navigate("/login");
+      } else {
+        toast.error("Unexpected error. Please try again.");
+      }
+    }
   };
 
   const handleClose = () => {
     setFormData(originalData);
     setIsEditing(false);
+    setErrorMap(undefined);
   };
 
   return (
@@ -82,6 +121,7 @@ const ProfilePage = () => {
               onSubmit={handleSubmit}
               onCancel={handleClose}
               setIsEditing={setIsEditing}
+              errorMap={errorMap}
             />
           ) : (
             <ServiceProviderProfileForm
@@ -91,6 +131,7 @@ const ProfilePage = () => {
               onSubmit={handleSubmit}
               onCancel={handleClose}
               setIsEditing={setIsEditing}
+              errorMap={errorMap}
             />
           )}
         </div>

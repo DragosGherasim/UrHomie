@@ -86,7 +86,6 @@ const ServiceProviderDetailsForm: React.FC = () => {
 
   return (
     <div className="relative flex items-center justify-center min-h-screen bg-green-50">
-      <Toaster />
       <form
         onSubmit={handleSubmit}
         className="bg-white p-8 rounded shadow-md w-full max-w-2xl flex flex-col gap-4 relative z-0"

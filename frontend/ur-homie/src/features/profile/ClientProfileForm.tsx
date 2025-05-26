@@ -1,5 +1,5 @@
 import React from "react";
-import { formatLabel } from "../../utils/formattersUtils"; 
+import { formatLabel } from "../../utils/formattersUtils";
 
 interface ClientProfileFormProps {
   formData: {
@@ -16,6 +16,7 @@ interface ClientProfileFormProps {
   onSubmit: (e: React.FormEvent) => void;
   onCancel: () => void;
   setIsEditing: React.Dispatch<React.SetStateAction<boolean>>;
+  errorMap?: Record<string, string[]>;
 }
 
 const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
@@ -25,6 +26,7 @@ const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
   onSubmit,
   onCancel,
   setIsEditing,
+  errorMap,
 }) => {
   return (
     <div className="relative bg-white p-8 rounded-2xl shadow-2xl w-full max-w-3xl">
@@ -63,10 +65,15 @@ const ClientProfileForm: React.FC<ClientProfileFormProps> = ({
                 onChange={onChange}
                 className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
                   isEditing && key !== "email"
-                    ? "border-gray-300 focus:ring-2 focus:ring-green-500"
+                    ? `border-gray-300 focus:ring-2 focus:ring-green-500 ${
+                        errorMap?.[key] ? "border-red-500" : ""
+                      }`
                     : "border-transparent bg-gray-100 text-gray-600 cursor-text"
                 }`}
               />
+              {errorMap?.[key] && (
+                <p className="text-sm text-red-500 mt-1">{errorMap[key][0]}</p>
+              )}
             </div>
           ) : null
         )}
