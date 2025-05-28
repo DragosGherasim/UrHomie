@@ -22,7 +22,7 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
         user = self.user_repo.validate_credentials(email, password)
         if not user:
             logger.warning(f"Authentication failed for email: {email}.")
-            return user_auth_pb2.LogInResponse(jwt="", error_message="Invalid email or password!")
+            return user_auth_pb2.LogInResponse(jwt="", sub="", role="", error_message="Invalid email or password!")
 
         access_token = self.jwt_service.generate_token(user, expires_in=900)
         refresh_token = self.jwt_service.generate_token(user, expires_in=604800, refresh=True)
@@ -32,7 +32,12 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
         ))
 
         logger.info(f"Authentication successful for {email}")
-        return user_auth_pb2.LogInResponse(jwt=access_token, error_message="")
+        return user_auth_pb2.LogInResponse(
+            jwt=access_token,
+            sub=str(user.id),
+            role=user.role,
+            error_message=""
+        )
 
     async def SignUp(self, request, context):
         email, password, role = request.email, request.password, request.role
@@ -110,7 +115,7 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
             if not token:
                 logger.warning("No refresh token found in cookie.")
                 context.set_code(grpc.StatusCode.UNAUTHENTICATED)
-                return user_auth_pb2.LogInResponse(jwt="", error_message="Missing refresh token")
+                return user_auth_pb2.LogInResponse(jwt="", sub="", role="", error_message="Missing refresh token")
 
             result = self.jwt_service.validate_token(token, refresh=True)
             if not result.get("is_valid"):
@@ -123,12 +128,17 @@ class UserAuthServer(user_auth_pb2_grpc.UserAuthenticationServicer):
 
             new_access_token = self.jwt_service.generate_token(user)
 
-            return user_auth_pb2.LogInResponse(jwt=new_access_token, error_message="")
+            return user_auth_pb2.LogInResponse(
+                jwt=new_access_token,
+                sub=str(user.id),
+                role=user.role,
+                error_message=""
+            )
 
         except Exception as e:
             logger.error(f"Refresh token validation failed: {e}")
             context.set_code(grpc.StatusCode.UNAUTHENTICATED)
-            return user_auth_pb2.LogInResponse(jwt="", error_message="Refresh token invalid")
+            return user_auth_pb2.LogInResponse(jwt="", sub="", role="", error_message="Refresh token invalid")
 
     async def LogOut(self, request, context):
         await context.send_initial_metadata((

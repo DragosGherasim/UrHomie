@@ -27,7 +27,7 @@ const ProfilePage = () => {
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const data = await fetchUserProfile(userId!, role!, accessToken!);
+        const data = await fetchUserProfile(userId!, role!);
         setFormData(data);
         setOriginalData(data);
       } catch (err: any) {
@@ -39,7 +39,7 @@ const ProfilePage = () => {
         else if (msg === "not_found") toast.error("Profile not found.");
         else toast.error("Something went wrong. Please try again later.");
 
-        navigate("/landing");
+        logout();
       }
     };
 
@@ -72,12 +72,7 @@ const ProfilePage = () => {
     }
 
     try {
-      const result = await patchUserProfile(
-        userId!,
-        role!,
-        payload,
-        accessToken!
-      );
+      const result = await patchUserProfile(userId!, role!, payload);
 
       if (!result.success) {
         setErrorMap(result.errors || {});
@@ -88,13 +83,15 @@ const ProfilePage = () => {
         toast.success("Your profile has been updated successfully!");
       }
     } catch (err: any) {
-      if (err.message === "unauthorized") {
-        toast.error("Your session has expired. Please log in again.");
-        logout();
-        navigate("/login");
-      } else {
-        toast.error("Unexpected error. Please try again.");
-      }
+      const msg = err.message;
+
+      if (msg === "unauthorized") toast.error("You must be logged in.");
+      else if (msg === "forbidden")
+        toast.error("You don't have permission to access this profile.");
+      else if (msg === "not_found") toast.error("Profile not found.");
+      else toast.error("Something went wrong. Please try again later.");
+
+      logout();
     }
   };
 

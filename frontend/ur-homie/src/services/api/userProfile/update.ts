@@ -1,4 +1,4 @@
-import axios from "axios";
+import apiClient from "../axiosSetup";
 
 interface PatchUserProfileResult {
   success: boolean;
@@ -9,16 +9,12 @@ interface PatchUserProfileResult {
 export const patchUserProfile = async (
   userId: string,
   role: "client" | "service_provider",
-  payload: Record<string, any>,
-  token: string
+  payload: Record<string, any>
 ): Promise<PatchUserProfileResult> => {
-  const baseUrl = "http://localhost:80/api/user-management";
   const endpoint = role === "client" ? `client/${userId}` : `service-provider/${userId}`;
 
   try {
-    const response = await axios.patch(`${baseUrl}/${endpoint}`, payload, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
+    const response = await apiClient.patch(`/${endpoint}`, payload);
 
     return { success: true, data: response.data };
   } catch (error: any) {

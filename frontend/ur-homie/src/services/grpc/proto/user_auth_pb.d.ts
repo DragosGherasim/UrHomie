@@ -28,6 +28,12 @@ export class LogInResponse extends jspb.Message {
   getJwt(): string;
   setJwt(value: string): LogInResponse;
 
+  getRole(): string;
+  setRole(value: string): LogInResponse;
+
+  getSub(): string;
+  setSub(value: string): LogInResponse;
+
   getErrorMessage(): string;
   setErrorMessage(value: string): LogInResponse;
 
@@ -42,6 +48,8 @@ export class LogInResponse extends jspb.Message {
 export namespace LogInResponse {
   export type AsObject = {
     jwt: string,
+    role: string,
+    sub: string,
     errorMessage: string,
   }
 }

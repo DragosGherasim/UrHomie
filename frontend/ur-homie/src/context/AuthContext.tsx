@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 import { authClient } from "../services/grpc/clients/authClient";
 import { Empty, LogInRequest } from "../services/grpc/proto/user_auth_pb";
-import { clearSession, validateAndStoreJwt } from "../utils/authContextUtils";
+import { clearSession } from "../utils/authContextUtils";
+import { setAccessTokenGetter, setTokenSetter } from "../services/api/axiosSetup";
 
 interface AuthContextProps {
   accessToken: string | null;
@@ -33,18 +34,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const navigate = useNavigate();
 
   useEffect(() => {
-    const refresh = new Empty();
-    authClient.refreshToken(refresh, {}, (err, resp) => {
+    setAccessTokenGetter(() => accessToken);
+    setTokenSetter(setAccessToken);
+  }, [accessToken]);
+
+  useEffect(() => {
+    authClient.refreshToken(new Empty(), {}, (err, resp) => {
       if (err || !resp.getJwt()) {
         clearSession(setAccessToken, setRole, setUserId);
         setLoading(false);
         return;
       }
 
-      const jwt = resp.getJwt();
-      setAccessToken(jwt);
+      const token = resp.getJwt();
+      const userRole = resp.getRole().toLowerCase() as "client" | "service_provider";
+      const userId = resp.getSub();
 
-      validateAndStoreJwt(jwt, setRole, setUserId, undefined, () => setLoading(false));
+      setAccessToken(token);
+      setRole(userRole);
+      setUserId(userId);
+      setLoading(false);
     });
   }, []);
 
@@ -63,17 +72,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      const jwt = resp.getJwt();
-      setAccessToken(jwt);
+      const token = resp.getJwt();
+      const userRole = resp.getRole().toLowerCase() as "client" | "service_provider";
+      const userId = resp.getSub();
 
-      validateAndStoreJwt(jwt, setRole, setUserId, () => navigate("/home"));
+      setAccessToken(token);
+      setRole(userRole);
+      setUserId(userId);
+
+      navigate("/home");
     });
   };
 
   const logout = () => {
     authClient.logOut(new Empty(), {}, () => {
       clearSession(setAccessToken, setRole, setUserId);
-      navigate("/login");
+      navigate("/landing");
     });
   };
 

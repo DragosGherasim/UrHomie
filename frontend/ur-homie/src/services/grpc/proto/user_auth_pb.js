@@ -413,7 +413,9 @@ proto.LogInResponse.prototype.toObject = function(opt_includeInstance) {
 proto.LogInResponse.toObject = function(includeInstance, msg) {
   var f, obj = {
 jwt: jspb.Message.getFieldWithDefault(msg, 1, ""),
-errorMessage: jspb.Message.getFieldWithDefault(msg, 2, "")
+role: jspb.Message.getFieldWithDefault(msg, 2, ""),
+sub: jspb.Message.getFieldWithDefault(msg, 3, ""),
+errorMessage: jspb.Message.getFieldWithDefault(msg, 4, "")
   };
 
   if (includeInstance) {
@@ -456,6 +458,14 @@ proto.LogInResponse.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
+      msg.setRole(value);
+      break;
+    case 3:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setSub(value);
+      break;
+    case 4:
+      var value = /** @type {string} */ (reader.readString());
       msg.setErrorMessage(value);
       break;
     default:
@@ -494,10 +504,24 @@ proto.LogInResponse.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getErrorMessage();
+  f = message.getRole();
   if (f.length > 0) {
     writer.writeString(
       2,
+      f
+    );
+  }
+  f = message.getSub();
+  if (f.length > 0) {
+    writer.writeString(
+      3,
+      f
+    );
+  }
+  f = message.getErrorMessage();
+  if (f.length > 0) {
+    writer.writeString(
+      4,
       f
     );
   }
@@ -523,10 +547,10 @@ proto.LogInResponse.prototype.setJwt = function(value) {
 
 
 /**
- * optional string error_message = 2;
+ * optional string role = 2;
  * @return {string}
  */
-proto.LogInResponse.prototype.getErrorMessage = function() {
+proto.LogInResponse.prototype.getRole = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -535,8 +559,44 @@ proto.LogInResponse.prototype.getErrorMessage = function() {
  * @param {string} value
  * @return {!proto.LogInResponse} returns this
  */
-proto.LogInResponse.prototype.setErrorMessage = function(value) {
+proto.LogInResponse.prototype.setRole = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
+};
+
+
+/**
+ * optional string sub = 3;
+ * @return {string}
+ */
+proto.LogInResponse.prototype.getSub = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.LogInResponse} returns this
+ */
+proto.LogInResponse.prototype.setSub = function(value) {
+  return jspb.Message.setProto3StringField(this, 3, value);
+};
+
+
+/**
+ * optional string error_message = 4;
+ * @return {string}
+ */
+proto.LogInResponse.prototype.getErrorMessage = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 4, ""));
+};
+
+
+/**
+ * @param {string} value
+ * @return {!proto.LogInResponse} returns this
+ */
+proto.LogInResponse.prototype.setErrorMessage = function(value) {
+  return jspb.Message.setProto3StringField(this, 4, value);
 };
 
 

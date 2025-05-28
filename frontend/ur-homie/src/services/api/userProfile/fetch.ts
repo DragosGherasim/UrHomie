@@ -1,23 +1,14 @@
-import axios from "axios";
+import apiClient from "../axiosSetup";
 
 export const fetchUserProfile = async (
   userId: string,
-  role: "client" | "service_provider",
-  token: string
+  role: "client" | "service_provider"
 ) => {
   try {
     const endpoint =
       role === "client" ? `client/${userId}` : `service-provider/${userId}`;
 
-    const response = await axios.get(
-      `http://localhost:80/api/user-management/${endpoint}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
-
+    const response = await apiClient.get(`/${endpoint}`);
     return response.data;
   } catch (err: any) {
     const status = err.response?.status;

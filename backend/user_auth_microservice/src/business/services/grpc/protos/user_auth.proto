@@ -15,7 +15,9 @@ message LogInRequest {
 
 message LogInResponse {
   string jwt = 1;
-  string error_message = 2;
+  string role = 2;
+  string sub = 3;
+  string error_message = 4;
 }
 
 message ValidateJwtRequest {
