@@ -1,0 +1,14 @@
+services:
+  mongodb:
+    container_name: test-service-catalog-ms-mongo
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DATABASE: service_catalog
+    volumes:
+      - mongodb_data:/data/db
+      - ./src/main/java/ro/urhomie/service_catalog/config:/docker-entrypoint-initdb.d
+
+volumes:
+  mongodb_data:

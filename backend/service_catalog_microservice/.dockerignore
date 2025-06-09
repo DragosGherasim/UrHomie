@@ -1,0 +1,7 @@
+target/*
+!target/generated-sources/
+.idea/
+*.iml
+.DS_Store
+
+*.log

@@ -1,0 +1,20 @@
+﻿services:
+  user-management-mariadb:
+    image: mariadb:latest
+    container_name: dev-user-management-mariadb
+    environment:
+      MYSQL_DATABASE: user-management
+      MYSQL_ROOT_PASSWORD: root-pass
+      MYSQL_USER: user-management-manager
+      MYSQL_PASSWORD: manager-pass
+    ports:
+      - '3307:3306'
+    volumes:
+      - ./Infrastructure/Persistence/Config/Scripts/InitDb:/docker-entrypoint-initdb.d
+  
+  user-management-rabbitmq:
+    image: rabbitmq:4.0.7-management-alpine
+    container_name: dev-user-management-rabbitmq
+    ports:
+        - "5672:5672"
+        - "15672:15672" 

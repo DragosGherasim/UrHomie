@@ -1,42 +1,57 @@
-# Node / React (CRA - frontend)
+# ──────────────── COMMON IDEs ────────────────
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+out/
+
+# ──────────────── OS FILES ────────────────
+.DS_Store
+Thumbs.db
+
+# ──────────────── MAVEN / JAVA ────────────────
+**/target/
+**/.mvn/
+**/mvnw
+**/mvnw.cmd
+**/dependency-reduced-pom.xml
+**/buildNumber.properties
+**/.springBeans
+**/.restart
+**/.restarted
+**/*.log
+
+# ──────────────── DOTNET ────────────────
+**/bin/
+**/obj/
+**/*.suo
+**/*.user
+**/*.userosscache
+**/*.sln.docstates
+**/*.log
+
+# ──────────────── PYTHON ────────────────
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/.env
+**/.env.*
+**/logs/
+
+# ──────────────── NODE / REACT ────────────────
 **/node_modules/
 **/build/
 **/.env.local
 **/.env.development.local
 **/.env.test.local
 **/.env.production.local
-**/.DS_Store
 
-# Python (user_auth_microservice)
-**/__pycache__/
-**/*.py[cod]
-**/.venv/
-**/.env
-**/.env.development
-**/.env.production
-**/logs/
+# ──────────────── DOCKER / COMPOSE  ────────────────
+/Dockerfile
+/compose.yaml
 
-# VSCode
-.vscode/
-
-# ASP.NET Core (user_management_microservice)
-**/bin/
-**/obj/
-**/logs/
-**/*.user
-**/*.suo
-**/*.userosscache
-**/*.sln.docstates
-
-# Secrets / Config
+# ──────────────── SECRETS / CONFIG ────────────────
 **/appsettings.Development.json
 **/appsettings.Production.json
 **/secrets.json
-
-# JetBrains
-.idea/
-*.iml
-
-# Docker / Compose
-**/Dockerfile
-**/compose.yaml

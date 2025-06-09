@@ -1,0 +1,30 @@
+services:
+  test-user-auth-mariadb:
+    image: mariadb:latest
+    container_name: test-user-auth-mariadb
+    environment:
+      MYSQL_DATABASE: user-auth
+      MYSQL_ROOT_PASSWORD: root-pass
+      MYSQL_USER: user-auth-manager
+      MYSQL_PASSWORD: manager-pass
+    ports:
+      - '3306:3306'
+    volumes:
+      - ./src/persistence/config/initdb/:/docker-entrypoint-initdb.d
+
+  test-rabbitmq:
+    image: rabbitmq:4.0.7-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"    # AMQP
+      - "15672:15672"  # Interfața de management
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  test-redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  rabbitmq_data:
