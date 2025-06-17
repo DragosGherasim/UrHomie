@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +21,6 @@ import java.util.List;
 public class ServiceCategoryController {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceCategoryController.class);
-
     private final ServiceCategoryService categoryService;
 
     @Operation(
@@ -36,14 +34,9 @@ public class ServiceCategoryController {
     public ResponseEntity<List<ServiceCategoryDto>> getAllCategories() {
         logger.info("GET /service-catalog/service-categories called to retrieve all categories");
 
-        try {
-            List<ServiceCategoryDto> categories = categoryService.getAll();
+        List<ServiceCategoryDto> categories = categoryService.getAll();
+        logger.info("Successfully retrieved {} service categories", categories.size());
 
-            logger.info("Successfully retrieved {} service categories", categories.size());
-            return ResponseEntity.status(HttpStatus.OK).body(categories);
-        } catch (Exception e) {
-            logger.error("Error occurred while retrieving service categories: {}", e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+        return ResponseEntity.ok(categories);
     }
 }

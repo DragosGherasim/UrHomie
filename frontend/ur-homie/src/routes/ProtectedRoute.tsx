@@ -1,15 +1,23 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-import { useAuth } from "../context/AuthContext";
-import LoadingSpinner from "../components/ui/LoadingSpinner";
+import { useAuth } from "../shared/context/AuthContext";
+import LoadingSpinner from "../shared/components/ui/LoadingSpinner";
 
-const ProtectedRoute = ({ children }: { children: React.JSX.Element }) => {
-  const { isAuthenticated, loading } = useAuth();
+interface ProtectedRouteProps {
+  children: React.ReactElement;
+  allowedRole?: "client" | "service_provider";
+}
+
+const ProtectedRoute = ({ children, allowedRole }: ProtectedRouteProps) => {
+  const { isAuthenticated, loading, role } = useAuth();
 
   if (loading) return <LoadingSpinner />;
 
-  return isAuthenticated ? children : <Navigate to="/landing" />;
-};
+  if (!isAuthenticated) return <Navigate to="/landing" />;
 
+  if (allowedRole && role !== allowedRole) return <Navigate to="/home" />;
+
+  return children;
+};
 export default ProtectedRoute;

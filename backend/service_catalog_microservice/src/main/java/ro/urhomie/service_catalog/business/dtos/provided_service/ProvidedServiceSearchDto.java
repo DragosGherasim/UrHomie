@@ -10,7 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class ProvidedServiceSearchDto {
-    private List<ProvidedServiceDto> services;
+    private List<ProvidedServiceWhCategoryDto> services;
     private int page;
     private int size;
     private long totalElements;

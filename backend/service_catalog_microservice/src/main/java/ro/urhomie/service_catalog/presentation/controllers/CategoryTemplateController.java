@@ -24,7 +24,6 @@ import java.util.Optional;
 public class CategoryTemplateController {
 
     private static final Logger logger = LoggerFactory.getLogger(CategoryTemplateController.class);
-
     private final CategoryTemplateService templateService;
 
     @Operation(
@@ -34,8 +33,7 @@ public class CategoryTemplateController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category template found and returned successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid category ID format"),
-            @ApiResponse(responseCode = "404", description = "No template found for the specified category ID"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "404", description = "No template found for the specified category ID")
     })
     @GetMapping("/{categoryId}")
     public ResponseEntity<CategoryTemplateDto> getTemplateByCategoryId(
@@ -46,20 +44,14 @@ public class CategoryTemplateController {
 
         logger.info("GET request received for category template with ID {}", categoryId);
 
-        try {
-            Optional<CategoryTemplateDto> templateOpt = templateService.getTemplate(categoryId);
+        Optional<CategoryTemplateDto> templateOpt = templateService.getTemplate(categoryId);
 
-            if (templateOpt.isEmpty()) {
-                logger.warn("GET failed: No template found for category ID {}", categoryId);
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-            }
-
-            logger.info("GET succeeded: Template for category ID {} retrieved successfully", categoryId);
-            return ResponseEntity.ok(templateOpt.get());
-
-        } catch (Exception ex) {
-            logger.error("GET failed for category ID {}: {}", categoryId, ex.getMessage(), ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        if (templateOpt.isEmpty()) {
+            logger.warn("GET failed: No template found for category ID {}", categoryId);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+
+        logger.info("GET succeeded: Template for category ID {} retrieved successfully", categoryId);
+        return ResponseEntity.ok(templateOpt.get());
     }
 }

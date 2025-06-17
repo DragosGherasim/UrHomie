@@ -14,7 +14,7 @@ export const setAccessTokenGetter = (getter: typeof getAccessToken) => {
 };
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:80/api/user-management",
+  baseURL: "http://localhost:80/api/",
 });
 
 apiClient.interceptors.request.use((config) => {
@@ -42,7 +42,7 @@ apiClient.interceptors.response.use(
         const newToken = await new Promise<string>((resolve, reject) => {
           authClient.refreshToken(new Empty(), {}, (err, resp) => {
             if (err || !resp.getJwt()) {
-              reject("Unable to refresh token");
+              reject(new Error("refresh_failed"));
               return;
             }
 
@@ -55,6 +55,7 @@ apiClient.interceptors.response.use(
         originalRequest.headers["Authorization"] = `Bearer ${newToken}`;
         return apiClient(originalRequest);
       } catch (refreshError) {
+        error._refreshFailed = true;
         return Promise.reject(error);
       }
     }

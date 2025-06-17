@@ -3,7 +3,7 @@ import {
   ClientDetails,
   ServiceProviderDetails,
 } from "../proto/user_auth_pb";
-import { GeneralFormData, ProviderDetailsData } from "../../../types/forms";
+import { GeneralFormData, ProviderDetailsData } from "../../../shared/types/forms";
 
 const setCommonFields = (req: SignUpRequest, data: GeneralFormData) => {
   req.setEmail(data.email);

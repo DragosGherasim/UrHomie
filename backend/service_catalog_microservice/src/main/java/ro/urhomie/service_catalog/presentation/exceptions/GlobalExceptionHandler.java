@@ -17,6 +17,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -77,10 +78,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidReferenceException.class)
     public ResponseEntity<Map<String, String>> handleInvalidReference(InvalidReferenceException ex) {
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Invalid input");
-        error.put("message", ex.getMessage());
+        error.put("error", ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
+    }
+
+    @ExceptionHandler(MultiValidationException.class)
+    public ResponseEntity<?> handleValidationPatchErrors(MultiValidationException ex) {
+        Map<String, String> simplifiedErrors = ex.getErrors().entrySet().stream()
+                .filter(entry -> entry.getValue() != null && !entry.getValue().isEmpty())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey,
+                        entry -> entry.getValue().get(0)
+                ));
+
+        return ResponseEntity
+                .status(HttpStatus.UNPROCESSABLE_ENTITY)
+                .body(simplifiedErrors);
     }
 
     @ExceptionHandler(AccessDeniedException.class)
