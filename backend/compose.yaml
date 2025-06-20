@@ -128,6 +128,40 @@ services:
       retries: 5
     command: mongod --quiet --logpath /dev/null 
 
+  booking-ms:
+    build:
+      context: booking_microservice
+    ports:
+      - "8082:8082" 
+    networks:
+      - booking-db
+      - backend
+    depends_on:
+      booking-mariadb:
+        condition: service_healthy
+
+  booking-mariadb:
+    image: mariadb:latest
+    container_name: booking-mariadb
+    environment:
+      MYSQL_DATABASE: booking-service
+      MYSQL_ROOT_PASSWORD: root-pass
+      MYSQL_USER: booking-service-manager
+      MYSQL_PASSWORD: manager-pass
+    ports:
+      - '3308:3306'
+    volumes:
+      - ./booking_microservice/src/main/java/ro/urhomie/booking/persistence/config:/docker-entrypoint-initdb.d
+      - booking_mariadb_data:/var/lib/mysql
+    networks:
+      - booking-db
+    healthcheck:
+      test: ["CMD", "mariadb", "-h", "localhost", "-u", "booking-service-manager", "-pmanager-pass", "-e", "SELECT 1"]
+      interval: 30s
+      retries: 5
+      start_period: 30s
+      timeout: 20s
+
   rabbitmq:
     image: rabbitmq:4.0.7-management-alpine
     container_name: rabbitmq
@@ -160,6 +194,7 @@ volumes:
   user_auth_mariadb_data:
   user_management_mariadb_data:
   service_catalog_mongodb_data:
+  booking_mariadb_data:
   rabbitmq_data:
 
 networks:
@@ -168,6 +203,8 @@ networks:
   user-management-db:
     driver: bridge
   service-catalog-db:
+    driver: bridge
+  booking-db:
     driver: bridge
   backend:
     driver: bridge

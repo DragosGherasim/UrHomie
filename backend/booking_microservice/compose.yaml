@@ -1,0 +1,17 @@
+services:
+  mariadb:
+    container_name: test-booking-ms-mariadb
+    image: 'mariadb:latest'
+    environment:
+      MYSQL_DATABASE: booking-service
+      MYSQL_ROOT_PASSWORD: root-pass
+      MYSQL_USER: booking-service-manager
+      MYSQL_PASSWORD: manager-pass
+    ports:
+      - '3308:3306'
+    volumes:
+      - ./src/main/java/ro/urhomie/booking/persistence/config:/docker-entrypoint-initdb.d
+      - mariadb_data:/var/lib/mysql
+
+volumes:
+  mariadb_data:

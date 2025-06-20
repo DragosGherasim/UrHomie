@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option java_package = "ro.urhomie.booking.business.services.grpc";
+option java_multiple_files = true;
+
+service UserAuthentication {
+  rpc LogIn(LogInRequest) returns (LogInResponse);
+  rpc ValidateJwt(ValidateJwtRequest) returns (ValidateJwtResponse);
+  rpc SignUp(SignUpRequest) returns (SignUpResponse);
+  rpc RefreshToken(Empty) returns (LogInResponse);
+  rpc LogOut(Empty) returns (Empty);
+}
+
+message LogInRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LogInResponse {
+  string jwt = 1;
+  string role = 2;
+  string sub = 3;
+  string error_message = 4;
+}
+
+message ValidateJwtRequest {
+  string jwt = 1;
+}
+
+message ValidateJwtResponse {
+  bool is_valid = 1;
+  string sub = 2;
+  string role = 3;
+  string error_message = 4;
+}
+
+message SignUpRequest {
+  string email = 1;
+  string password = 2;
+  string role = 3;
+
+  string first_name = 4;
+  string last_name = 5;
+  string phone_number = 6;
+  string country = 7;
+  string city = 8;
+  string address = 9;
+
+ oneof profile_data {
+   ClientDetails client = 10;
+   ServiceProviderDetails provider = 11;
+ }
+}
+
+message SignUpResponse {
+  bool success = 1;
+  string error_message = 2;
+  string correlation_id = 3;
+}
+
+message ClientDetails {
+  // empty, at this moment
+}
+
+message ServiceProviderDetails {
+  string education = 1;
+  string certifications = 2;
+  string experience_description = 3;
+  string work_schedule = 4;
+  int32 coverage_area = 5;
+}
+
+message Empty {}
