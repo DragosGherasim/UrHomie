@@ -30,24 +30,22 @@ public class Booking {
     @Column(name = "service_id", nullable = false, length = 64)
     private String serviceId;
 
-    @Column(name = "scheduled_at", nullable = false)
-    private LocalDateTime scheduledAt;
-
-    @Column(name = "finish_at")
-    private LocalDateTime finishAt;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "booking_details_id", nullable = false)
+    private BookingDetails bookingDetails;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private BookingStatus status;
-
-    @Column(name = "extra_details", columnDefinition = "TEXT")
-    private String extraDetails;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     @UpdateTimestamp
-    @Column(name = "updated_at", updatable = false)
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @Column(name = "finish_at")
+    private LocalDateTime finishAt;
 }

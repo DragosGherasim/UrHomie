@@ -99,7 +99,7 @@ const ServiceProviderHomePage = () => {
 
               <div className="text-right mt-4">
                 <button
-                  onClick={() => navigate("/dashboard/services")}
+                  onClick={() => navigate("/dashboard/my-services")}
                   className="text-sm text-green-300 hover:text-white underline"
                 >
                   View all services →

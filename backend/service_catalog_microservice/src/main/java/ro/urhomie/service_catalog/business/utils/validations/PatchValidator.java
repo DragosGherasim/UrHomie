@@ -32,6 +32,14 @@ public class PatchValidator {
                 }
             }
 
+            if (field.equals("phoneNumber") && value instanceof String phone) {
+                if (phone.trim().isEmpty()) {
+                    errors.put(field, List.of("Phone number cannot be empty."));
+                } else if (!phone.matches("^\\+?[0-9]{10,15}$")) {
+                    errors.put(field, List.of("Phone number must be 10–15 digits and may start with '+'."));
+                }
+            }
+
             if (field.equals("details") && value instanceof Map<?, ?> detailsMap) {
                 for (Map.Entry<?, ?> entry : detailsMap.entrySet()) {
                     if (entry.getKey() instanceof String key) {

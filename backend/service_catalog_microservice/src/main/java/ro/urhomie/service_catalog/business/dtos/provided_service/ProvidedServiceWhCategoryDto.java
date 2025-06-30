@@ -24,6 +24,7 @@ public class ProvidedServiceWhCategoryDto {
 
     private String city;
     private String address;
+    private String phoneNumber;
 
     private Map<String, Object> details;
 }

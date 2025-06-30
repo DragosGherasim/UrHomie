@@ -27,13 +27,20 @@ const HomeNav: React.FC<HomeNavProps> = ({ role }) => {
         <NavLink to="/profile" className={getLinkClass}>
           Profile
         </NavLink>
-        <NavLink to="/dashboard/requests" className={getLinkClass}>
-          Requests
-        </NavLink>
+
+        {role === "client" && (
+          <NavLink to="/my-bookings" className={getLinkClass}>
+            My Bookings
+          </NavLink>
+        )}
+
         {role === "service_provider" && (
           <>
-            <NavLink to="/dashboard/services" className={getLinkClass}>
-              Services
+            <NavLink to="/dashboard/my-services" className={getLinkClass}>
+              My Services
+            </NavLink>
+            <NavLink to="/dashboard/my-requests" className={getLinkClass}>
+              My Requests
             </NavLink>
             <NavLink to="/dashboard/add-service" className={getLinkClass}>
               Add

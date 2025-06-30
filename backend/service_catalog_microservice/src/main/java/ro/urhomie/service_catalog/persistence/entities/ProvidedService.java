@@ -26,6 +26,7 @@ public class ProvidedService {
     private String durationEstimate;
     private String city;
     private String address;
+    private String phoneNumber;
 
     private Map<String, Object> details;
 }

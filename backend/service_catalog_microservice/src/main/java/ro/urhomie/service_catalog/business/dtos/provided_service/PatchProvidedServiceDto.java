@@ -28,5 +28,7 @@ public class PatchProvidedServiceDto implements PatchableDto {
 
     private String address;
 
+    private String phoneNumber;
+
     private Map<String, Object> details;
 }

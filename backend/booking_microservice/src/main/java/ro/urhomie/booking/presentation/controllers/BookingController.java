@@ -8,11 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
-import ro.urhomie.booking.business.dtos.BookingDto;
-import ro.urhomie.booking.business.dtos.BookingSearchDto;
-import ro.urhomie.booking.business.dtos.CancelBookingDto;
-import ro.urhomie.booking.business.dtos.CreateBookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingSearchDto;
+import ro.urhomie.booking.business.dtos.booking.CancelBookingDto;
+import ro.urhomie.booking.business.dtos.booking.CreateBookingDto;
 import ro.urhomie.booking.business.services.interfaces.BookingService;
 
 
@@ -150,7 +152,8 @@ public class BookingController {
     @PatchMapping("/{id}/cancel")
     public ResponseEntity<BookingDto> cancelBooking(
             @PathVariable Long id,
-            @Valid @RequestBody CancelBookingDto cancelDto) {
+            @Valid @RequestBody CancelBookingDto cancelDto,
+            Authentication authentication) {
 
         logger.info("PATCH /booking-service/booking/{}/cancel called with reason: {}", id, cancelDto.getMessage());
 
@@ -161,7 +164,14 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        BookingDto cancelled = bookingService.cancelBooking(bookingDtoOpt.get(), cancelDto.getMessage());
+        String userRole = authentication.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElseThrow(() -> new RuntimeException("Role not found"));
+
+
+
+        BookingDto cancelled = bookingService.cancelBooking(bookingDtoOpt.get(), cancelDto.getMessage(), userRole);
 
         logger.info("Booking with ID {} successfully cancelled. Message: {}", cancelled.getId(), cancelDto.getMessage());
         return ResponseEntity.ok(cancelled);

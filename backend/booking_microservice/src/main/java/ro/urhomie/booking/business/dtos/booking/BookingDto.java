@@ -1,4 +1,4 @@
-package ro.urhomie.booking.business.dtos;
+package ro.urhomie.booking.business.dtos.booking;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
@@ -16,20 +16,28 @@ public class BookingDto {
     private Long id;
     private Long clientId;
     private Long providerId;
+
     private String serviceId;
+
+    private String firstName;
+    private String lastName;
+    private String city;
+    private String address;
+    private String phoneNumber;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime scheduledAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime finishAt;
+    private String extraDetails;
 
     private BookingStatus status;
-    private String extraDetails;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime updatedAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime finishAt;
 }

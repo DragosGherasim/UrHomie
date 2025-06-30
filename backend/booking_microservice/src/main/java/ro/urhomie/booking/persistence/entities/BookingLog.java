@@ -35,8 +35,8 @@ public class BookingLog {
     @Column(name = "new_status", nullable = false)
     private BookingStatus newStatus;
 
-    @Column(columnDefinition = "TEXT")
-    private String message;
+    @Column(name = "decline_message", columnDefinition = "TEXT")
+    private String declineMessage;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)

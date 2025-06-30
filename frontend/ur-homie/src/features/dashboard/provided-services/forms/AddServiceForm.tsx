@@ -33,9 +33,16 @@ const AddServiceForm = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [templateFields, setTemplateFields] = useState<TemplateField[]>([]);
   const [formData, setFormData] = useState<Record<string, any>>({
-    durationDays: 0,
-    durationHours: 0,
-  });
+  title: "",
+  description: "",
+  city: "",
+  address: "",
+  basePrice: 0,
+  durationDays: 0,
+  durationHours: 0,
+  phoneNumber: "",
+});
+
   const [errorMap, setErrorMap] = useState<Record<string, string[]>>({});
   const [multiSelectState, setMultiSelectState] = useState<
     Record<string, string[]>
@@ -176,6 +183,7 @@ const AddServiceForm = () => {
         : `${durationDays}d ${durationHours}h`;
 
     const payload = {
+      categoryId: selectedCategoryId,
       providerId: userId,
       title: formData.title,
       description: formData.description,
@@ -183,7 +191,7 @@ const AddServiceForm = () => {
       durationEstimate,
       city: formData.city,
       address: formData.address,
-      categoryId: selectedCategoryId,
+      phoneNumber: formData.phoneNumber,
       details,
     };
 

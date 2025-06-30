@@ -2,6 +2,7 @@ package ro.urhomie.service_catalog.business.dtos.provided_service;
 
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import ro.urhomie.service_catalog.business.utils.validations.ValidDetails;
 import ro.urhomie.service_catalog.business.utils.validations.ValidPrice;
@@ -39,6 +40,10 @@ public class CreateProvidedServiceDto {
 
     @NotBlank(message = "Address cannot be empty")
     private String address;
+
+    @NotBlank(message = "Phone number cannot be empty")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be 10–15 digits and may start with '+'.")
+    private String phoneNumber;
 
     @ValidDetails
     private Map<String, Object> details;

@@ -18,11 +18,11 @@ const DashboardNav = () => {
       </div>
 
       <div className="flex gap-10 text-sm font-medium text-gray-700">
-        <NavLink to="/dashboard/services" className={getLinkClass}>
-          Services
+        <NavLink to="/dashboard/my-services" className={getLinkClass}>
+          My Services
         </NavLink>
-        <NavLink to="/dashboard/requests" className={getLinkClass}>
-          Requests
+        <NavLink to="/dashboard/my-requests" className={getLinkClass}>
+          My Requests
         </NavLink>
         <NavLink to="/dashboard/add-service" className={getLinkClass}>
           Add

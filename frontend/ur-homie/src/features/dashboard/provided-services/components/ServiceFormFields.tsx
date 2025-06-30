@@ -95,6 +95,13 @@ export const ServiceFormFields: React.FC<Props> = ({
         {renderInput("address", formData.address)}
         {renderError("address")}
       </div>
+      <div className="col-span-2">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Phone Number
+        </label>
+        {renderInput("phoneNumber", formData.phoneNumber)}
+        {renderError("phoneNumber")}
+      </div>
 
       <div className="col-span-1">
         <label className="block text-sm font-medium text-gray-700 mb-1">

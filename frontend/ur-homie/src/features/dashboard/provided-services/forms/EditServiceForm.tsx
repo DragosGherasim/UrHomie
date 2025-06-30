@@ -28,7 +28,7 @@ interface Props {
   onSaveSuccess: (updatedData: any) => void;
 }
 
-const EditSeviceForm: React.FC<Props> = ({
+const EditServiceForm: React.FC<Props> = ({
   serviceId,
   initialFormData,
   originalDetails,
@@ -57,14 +57,17 @@ const EditSeviceForm: React.FC<Props> = ({
   const [parsedDays, parsedHours] = parseDuration(
     initialFormData.durationEstimate
   );
+
   const [formData, setFormData] = useState<FormDataType>({
     ...initialFormData,
+    phoneNumber: initialFormData.phoneNumber || "",
     durationDays: parsedDays,
     durationHours: parsedHours,
   });
 
   const [originalData] = useState<FormDataType>({
     ...initialFormData,
+    phoneNumber: initialFormData.phoneNumber || "",
     durationDays: parsedDays,
     durationHours: parsedHours,
   });
@@ -128,7 +131,14 @@ const EditSeviceForm: React.FC<Props> = ({
   const buildPatchPayload = (): Record<string, any> => {
     const payload: Record<string, any> = {};
 
-    ["title", "description", "basePrice", "city", "address"].forEach((key) => {
+    [
+      "title",
+      "description",
+      "basePrice",
+      "city",
+      "address",
+      "phoneNumber",
+    ].forEach((key) => {
       if (formData[key] !== originalData[key]) {
         payload[key] = formData[key];
       }
@@ -175,7 +185,6 @@ const EditSeviceForm: React.FC<Props> = ({
     setSaving(true);
     try {
       const updated = await patchServiceById(serviceId, payload);
-
       toast.success("Changes saved successfully!");
       onSaveSuccess(updated);
     } catch (err: any) {
@@ -197,7 +206,6 @@ const EditSeviceForm: React.FC<Props> = ({
                 : key;
               parsed[finalKey] = Array.isArray(val) ? val : [String(val)];
             }
-            console.error("Validation errors:", parsed);
             setErrorMap(parsed);
           },
         },
@@ -253,4 +261,4 @@ const EditSeviceForm: React.FC<Props> = ({
   );
 };
 
-export default EditSeviceForm;
+export default EditServiceForm;

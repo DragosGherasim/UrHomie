@@ -6,11 +6,10 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ro.urhomie.booking.business.dtos.BookingDto;
-import ro.urhomie.booking.business.dtos.BookingSearchDto;
-import ro.urhomie.booking.business.dtos.CreateBookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingSearchDto;
+import ro.urhomie.booking.business.dtos.booking.CreateBookingDto;
 import ro.urhomie.booking.business.services.interfaces.BookingService;
-import ro.urhomie.booking.business.utils.mappers.BookingLogMapper;
 import ro.urhomie.booking.business.utils.mappers.BookingMapper;
 import ro.urhomie.booking.persistence.entities.Booking;
 import ro.urhomie.booking.persistence.entities.BookingLog;
@@ -18,6 +17,7 @@ import ro.urhomie.booking.persistence.repositories.BookingLogRepository;
 import ro.urhomie.booking.persistence.repositories.BookingRepository;
 import ro.urhomie.booking.persistence.utils.enums.BookingStatus;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -50,7 +50,6 @@ public class BookingServiceImp implements BookingService {
         return BookingMapper.buildSearchDto(resultPage.getContent(), page, size);
     }
 
-
     @Override
     @Transactional
     public BookingDto createBooking(CreateBookingDto createBookingDto) {
@@ -58,7 +57,11 @@ public class BookingServiceImp implements BookingService {
 
         Booking created = bookingRepo.save(booking);
 
-        BookingLog log = BookingLogMapper.bookingToLog(created);
+        BookingLog log = BookingLog.builder()
+                .booking(created)
+                .changedById(createBookingDto.getClientId())
+                .newStatus(BookingStatus.PENDING)
+                .build();
 
         bookingLogRepo.save(log);
 
@@ -77,8 +80,13 @@ public class BookingServiceImp implements BookingService {
 
         Booking updated = bookingRepo.save(BookingMapper.dtoToEntity(bookingDto));
 
-        BookingLog log = BookingLogMapper.bookingToLog(updated, "Booking confirmed" );
-        log.setOldStatus(oldStatus);
+        BookingLog log = BookingLog.builder()
+                .booking(updated)
+                .changedById(bookingDto.getProviderId())
+                .oldStatus(oldStatus)
+                .newStatus(BookingStatus.CONFIRMED)
+                .build();
+
         bookingLogRepo.save(log);
 
         return BookingMapper.entityToDto(updated);
@@ -86,7 +94,7 @@ public class BookingServiceImp implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto cancelBooking(BookingDto bookingDto, String message) {
+    public BookingDto cancelBooking(BookingDto bookingDto, String message, String userRole) {
         if (bookingDto.getStatus() == BookingStatus.CANCELLED || bookingDto.getStatus() == BookingStatus.FINISHED) {
             throw new IllegalStateException("Cannot cancel a finished or already cancelled booking");
         }
@@ -96,9 +104,20 @@ public class BookingServiceImp implements BookingService {
 
         Booking updated = bookingRepo.save(BookingMapper.dtoToEntity(bookingDto));
 
-        BookingLog log = BookingLogMapper.bookingToLog(updated, message);
-        log.setOldStatus(oldStatus);
-        log.setNewStatus(BookingStatus.CANCELLED);
+        Long changedById = switch (userRole) {
+            case "CLIENT" -> bookingDto.getClientId();
+            case "SERVICE_PROVIDER" -> bookingDto.getProviderId();
+            default -> null;
+        };
+
+        BookingLog log = BookingLog.builder()
+                .booking(updated)
+                .changedById(changedById)
+                .oldStatus(oldStatus)
+                .newStatus(BookingStatus.CANCELLED)
+                .declineMessage(message)
+                .build();
+
         bookingLogRepo.save(log);
 
         return BookingMapper.entityToDto(updated);
@@ -113,12 +132,20 @@ public class BookingServiceImp implements BookingService {
 
         BookingStatus oldStatus = bookingDto.getStatus();
         bookingDto.setStatus(BookingStatus.FINISHED);
+        bookingDto.setFinishAt(LocalDateTime.now());
 
         Booking updated = bookingRepo.save(BookingMapper.dtoToEntity(bookingDto));
 
-        BookingLog log = BookingLogMapper.bookingToLog(updated, "Booking finished");
+        BookingLog log = BookingLog.builder()
+                .booking(updated)
+                .changedById(bookingDto.getProviderId())
+                .oldStatus(oldStatus)
+                .newStatus(BookingStatus.FINISHED)
+                .build();
+
         log.setOldStatus(oldStatus);
         log.setNewStatus(BookingStatus.FINISHED);
+
         bookingLogRepo.save(log);
 
         return BookingMapper.entityToDto(updated);

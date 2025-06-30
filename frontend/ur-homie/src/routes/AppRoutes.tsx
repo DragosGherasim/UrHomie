@@ -15,6 +15,9 @@ import MyServicesPage from "../features/dashboard/provided-services/pages/MyServ
 import ServiceDetailsPage from "../features/dashboard/provided-services/pages/ServiceDetailsPage";
 import NotFoundPage from "../features/not-found/NotFoundPage";
 import SearchResultsPage from "../features/search/SearchResultsPage";
+import MyBookingsPage from "../features/bookings/pages/MyBookingsPage";
+import BookingLayout from "../features/bookings/layout/BookingLayout";
+import MyRequestsPage from "../features/dashboard/requests/pages/MyRequestsPage";
 
 const AppRoutes = () => {
   return (
@@ -42,6 +45,17 @@ const AppRoutes = () => {
       />
 
       <Route
+        path="/my-bookings"
+        element={
+          <ProtectedRoute allowedRole="client">
+            <BookingLayout />
+          </ProtectedRoute>
+        }
+      >
+        <Route index element={<MyBookingsPage />} />
+      </Route>
+
+      <Route
         path="/dashboard"
         element={
           <ProtectedRoute allowedRole="service_provider">
@@ -49,8 +63,9 @@ const AppRoutes = () => {
           </ProtectedRoute>
         }
       >
+        <Route path="my-services" element={<MyServicesPage />} />
+        <Route path="my-requests" element={<MyRequestsPage />} />
         <Route path="add-service" element={<AddServiceForm />} />
-        <Route path="services" element={<MyServicesPage />} />
       </Route>
 
       <Route

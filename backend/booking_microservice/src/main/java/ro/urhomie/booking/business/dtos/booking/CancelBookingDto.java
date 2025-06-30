@@ -1,4 +1,4 @@
-package ro.urhomie.booking.business.dtos;
+package ro.urhomie.booking.business.dtos.booking;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;

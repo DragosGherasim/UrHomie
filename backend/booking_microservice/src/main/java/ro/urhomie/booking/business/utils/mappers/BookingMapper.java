@@ -1,9 +1,10 @@
 package ro.urhomie.booking.business.utils.mappers;
 
-import ro.urhomie.booking.business.dtos.BookingDto;
-import ro.urhomie.booking.business.dtos.BookingSearchDto;
-import ro.urhomie.booking.business.dtos.CreateBookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingDto;
+import ro.urhomie.booking.business.dtos.booking.BookingSearchDto;
+import ro.urhomie.booking.business.dtos.booking.CreateBookingDto;
 import ro.urhomie.booking.persistence.entities.Booking;
+import ro.urhomie.booking.persistence.entities.BookingDetails;
 import ro.urhomie.booking.persistence.utils.enums.BookingStatus;
 
 import java.util.List;
@@ -11,44 +12,74 @@ import java.util.List;
 public class BookingMapper {
 
     public static BookingDto entityToDto(Booking booking) {
+        BookingDetails details = booking.getBookingDetails();
+
         return BookingDto.builder()
                 .id(booking.getId())
                 .clientId(booking.getClientId())
                 .providerId(booking.getProviderId())
                 .serviceId(booking.getServiceId())
-                .scheduledAt(booking.getScheduledAt())
-                .finishAt(booking.getFinishAt())
                 .status(booking.getStatus())
-                .extraDetails(booking.getExtraDetails())
+                .finishAt(booking.getFinishAt())
                 .createdAt(booking.getCreatedAt())
                 .updatedAt(booking.getUpdatedAt())
+
+                .firstName(details != null ? details.getFirstName() : null)
+                .lastName(details != null ? details.getLastName() : null)
+                .city(details != null ? details.getCity() : null)
+                .address(details != null ? details.getAddress() : null)
+                .phoneNumber(details != null ? details.getPhoneNumber() : null)
+                .scheduledAt(details != null ? details.getScheduledAt() : null)
+                .extraDetails(details != null ? details.getExtraDetails() : null)
                 .build();
     }
 
-    public static Booking dtoToEntity(BookingDto bookingDto) {
-        return Booking.builder()
-                .id(bookingDto.getId())
-                .clientId(bookingDto.getClientId())
-                .providerId(bookingDto.getProviderId())
-                .serviceId(bookingDto.getServiceId())
-                .scheduledAt(bookingDto.getScheduledAt())
-                .finishAt(bookingDto.getFinishAt())
-                .status(bookingDto.getStatus())
-                .extraDetails(bookingDto.getExtraDetails())
-                .createdAt(bookingDto.getCreatedAt())
-                .updatedAt(bookingDto.getUpdatedAt())
+    public static Booking dtoToEntity(BookingDto dto) {
+        Booking booking = Booking.builder()
+                .id(dto.getId())
+                .clientId(dto.getClientId())
+                .providerId(dto.getProviderId())
+                .serviceId(dto.getServiceId())
+                .status(dto.getStatus())
+                .finishAt(dto.getFinishAt())
+                .createdAt(dto.getCreatedAt())
+                .updatedAt(dto.getUpdatedAt())
                 .build();
+
+        BookingDetails details = BookingDetails.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .city(dto.getCity())
+                .address(dto.getAddress())
+                .phoneNumber(dto.getPhoneNumber())
+                .scheduledAt(dto.getScheduledAt())
+                .extraDetails(dto.getExtraDetails())
+                .build();
+
+        booking.setBookingDetails(details);
+        return booking;
     }
 
-    public static Booking createDtoToEntity(CreateBookingDto createBookingDto) {
-        return Booking.builder()
-                .clientId(createBookingDto.getClientId())
-                .providerId(createBookingDto.getProviderId())
-                .serviceId(createBookingDto.getServiceId())
-                .scheduledAt(createBookingDto.getScheduledAt())
+    public static Booking createDtoToEntity(CreateBookingDto dto) {
+        Booking booking = Booking.builder()
+                .clientId(dto.getClientId())
+                .providerId(dto.getProviderId())
+                .serviceId(dto.getServiceId())
                 .status(BookingStatus.PENDING)
-                .extraDetails(createBookingDto.getExtraDetails())
                 .build();
+
+        BookingDetails details = BookingDetails.builder()
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .city(dto.getCity())
+                .address(dto.getAddress())
+                .phoneNumber(dto.getPhoneNumber())
+                .scheduledAt(dto.getScheduledAt())
+                .extraDetails(dto.getExtraDetails())
+                .build();
+
+        booking.setBookingDetails(details);
+        return booking;
     }
 
     public static BookingSearchDto buildSearchDto(List<Booking> bookings, int page, int size) {

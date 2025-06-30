@@ -21,6 +21,7 @@ public class ProvidedServiceMapper {
                 .durationEstimate(dto.getDurationEstimate())
                 .city(dto.getCity())
                 .address(dto.getAddress())
+                .phoneNumber(dto.getPhoneNumber())
                 .details(dto.getDetails())
                 .build();
     }
@@ -36,6 +37,7 @@ public class ProvidedServiceMapper {
                 .durationEstimate(dto.getDurationEstimate())
                 .city(dto.getCity())
                 .address(dto.getAddress())
+                .phoneNumber(dto.getPhoneNumber())
                 .details(dto.getDetails())
                 .build();
     }
@@ -51,6 +53,7 @@ public class ProvidedServiceMapper {
                 .durationEstimate(service.getDurationEstimate())
                 .city(service.getCity())
                 .address(service.getAddress())
+                .phoneNumber(service.getPhoneNumber())
                 .details(service.getDetails())
                 .build();
     }
@@ -73,6 +76,7 @@ public class ProvidedServiceMapper {
                 .durationEstimate(service.getDurationEstimate())
                 .city(service.getCity())
                 .address(service.getAddress())
+                .phoneNumber(service.getPhoneNumber())
                 .details(service.getDetails())
                 .build();
     }

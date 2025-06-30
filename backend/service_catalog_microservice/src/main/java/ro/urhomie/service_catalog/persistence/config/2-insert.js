@@ -162,6 +162,7 @@ db.services.insertMany([
         durationEstimate: "1d 4h",
         city: "Cluj-Napoca",
         address: "Strada Baii nr. 10",
+        phoneNumber: "0753992675",
         details: {
             service_scope: "installation",
             included_fixtures: ["sink", "toilet"]
@@ -176,6 +177,7 @@ db.services.insertMany([
         durationEstimate: "1d 1h",
         city: "Cluj-Napoca",
         address: "Strada Reparatiei nr. 5",
+        phoneNumber: "0753992675",
         details: {
             service_scope: "repair",
             included_fixtures: ["pipes"]
@@ -190,6 +192,7 @@ db.services.insertMany([
         durationEstimate: "2d 2h",
         city: "Cluj-Napoca",
         address: "Strada Electricitatii nr. 8",
+        phoneNumber: "0753992675",
         details: {
             electrical_services: ["lighting", "wiring"]
         }
@@ -203,6 +206,7 @@ db.services.insertMany([
         durationEstimate: "1d 0h",
         city: "Cluj-Napoca",
         address: "Strada Intretinerii nr. 3",
+        phoneNumber: "0753992675",
         details: {
             maintenance_type: "preventive",
             covered_areas: ["interior", "basement"]
@@ -217,6 +221,7 @@ db.services.insertMany([
         durationEstimate: "3d 0h",
         city: "Cluj-Napoca",
         address: "Strada Creatiei nr. 1",
+        phoneNumber: "0753992675",
         details: {}
     },
     {
@@ -228,6 +233,7 @@ db.services.insertMany([
         durationEstimate: "1d 5h",
         city: "București",
         address: "Strada Curateniei nr. 12",
+        phoneNumber: "0753992675",
         details: {
             cleaning_type: "post-renovation",
             frequency: "once"
@@ -242,6 +248,7 @@ db.services.insertMany([
         durationEstimate: "2d 0h",
         city: "București",
         address: "Strada Culorii nr. 7",
+        phoneNumber: "0753982675",
         details: {
             number_of_rooms: 3
         }
@@ -255,6 +262,7 @@ db.services.insertMany([
         durationEstimate: "0d 6h",
         city: "București",
         address: "Strada Ventilatiei nr. 15",
+        phoneNumber: "0753992675",
         details: {
             service_type: "filter cleaning"
         }
@@ -268,6 +276,7 @@ db.services.insertMany([
         durationEstimate: "1d 2h",
         city: "București",
         address: "Strada Florilor nr. 22",
+        phoneNumber: "0753992675",
         details: {
             area_size: 150
         }
@@ -281,6 +290,7 @@ db.services.insertMany([
         durationEstimate: "2d 4h",
         city: "București",
         address: "Strada Panoului nr. 9",
+        phoneNumber: "0753992675",
         details: {
             electrical_services: ["panels", "appliances"]
         }
