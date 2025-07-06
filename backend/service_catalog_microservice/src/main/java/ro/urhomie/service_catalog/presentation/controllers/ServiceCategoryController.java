@@ -28,7 +28,8 @@ public class ServiceCategoryController {
             description = "Retrieves all service categories available in the catalog for classification and filtering purposes"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "List of service categories with names and details returned successfully")
+            @ApiResponse(responseCode = "200", description = "List of service categories with names and details returned successfully"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required")
     })
     @GetMapping
     public ResponseEntity<List<ServiceCategoryDto>> getAllCategories() {

@@ -33,6 +33,7 @@ public class CategoryTemplateController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Category template found and returned successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid category ID format"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
             @ApiResponse(responseCode = "404", description = "No template found for the specified category ID")
     })
     @GetMapping("/{categoryId}")

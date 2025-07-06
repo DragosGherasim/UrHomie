@@ -8,6 +8,7 @@ import {
   fetchCategoryTemplate,
 } from "../../../../services/api/serviceCatalog/fetch";
 import { postNewService } from "../../../../services/api/serviceCatalog/create";
+import { fetchUserProfile } from "../../../../services/api/userProfile/fetch";
 import { ServiceFormFields } from "../components/ServiceFormFields";
 import LoadingSpinner from "../../../../shared/components/ui/LoadingSpinner";
 import FormOverlaySpinner from "../../../../shared/components/ui/FormOverlaySpinner";
@@ -33,23 +34,22 @@ const AddServiceForm = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<string>("");
   const [templateFields, setTemplateFields] = useState<TemplateField[]>([]);
   const [formData, setFormData] = useState<Record<string, any>>({
-  title: "",
-  description: "",
-  city: "",
-  address: "",
-  basePrice: 0,
-  durationDays: 0,
-  durationHours: 0,
-  phoneNumber: "",
-});
+    title: "",
+    description: "",
+    city: "",
+    address: "",
+    basePrice: 0,
+    durationDays: 0,
+    durationHours: 0,
+    phoneNumber: "",
+  });
 
   const [errorMap, setErrorMap] = useState<Record<string, string[]>>({});
-  const [multiSelectState, setMultiSelectState] = useState<
-    Record<string, string[]>
-  >({});
+  const [multiSelectState, setMultiSelectState] = useState<Record<string, string[]>>({});
   const [loadingInitial, setLoadingInitial] = useState(true);
   const [loadingTemplate, setLoadingTemplate] = useState(false);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
+  const [fatalError, setFatalError] = useState(false);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -63,10 +63,10 @@ const AddServiceForm = () => {
         handleApiError(err, {
           logout,
           knownMessages: {
-            forbidden:
-              "You don't have permission to access service categories.",
+            forbidden: "Failed to load your form. Please try again later.",
           },
-          fallbackMessage: "Unable to load categories.",
+          fallbackMessage: "Failed to load your form.",
+          onDefault: () => setFatalError(true),
         });
       } finally {
         setLoadingInitial(false);
@@ -81,9 +81,7 @@ const AddServiceForm = () => {
     const loadTemplate = async () => {
       setLoadingTemplate(true);
       try {
-        const data: { fields: TemplateField[] } = await fetchCategoryTemplate(
-          selectedCategoryId
-        );
+        const data: { fields: TemplateField[] } = await fetchCategoryTemplate(selectedCategoryId);
         setTemplateFields(data.fields);
 
         const multiDefaults: Record<string, string[]> = {};
@@ -111,6 +109,7 @@ const AddServiceForm = () => {
             forbidden: "You don't have permission to access service templates.",
           },
           fallbackMessage: "Unable to load template.",
+          onDefault: () => setFatalError(true),
         });
       } finally {
         setLoadingTemplate(false);
@@ -120,10 +119,36 @@ const AddServiceForm = () => {
     loadTemplate();
   }, [selectedCategoryId, logout]);
 
+  useEffect(() => {
+    const preloadProviderProfile = async () => {
+      if (!userId) return;
+      try {
+        const data = await fetchUserProfile(userId, "service_provider");
+
+        setFormData((prev) => ({
+          ...prev,
+          city: prev.city || data.city || "",
+          address: prev.address || data.address || "",
+          phoneNumber: prev.phoneNumber || data.phoneNumber || "",
+        }));
+      } catch (err: any) {
+        handleApiError(err, {
+          logout,
+          knownMessages: {
+            unauthorized: "Please log in to continue.",
+            not_found: "Profile not found.",
+          },
+          fallbackMessage: "Failed to prefill your profile info.",
+          onDefault: () => setFatalError(true),
+        });
+      }
+    };
+
+    preloadProviderProfile();
+  }, [userId, logout]);
+
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
 
@@ -178,9 +203,7 @@ const AddServiceForm = () => {
 
     const { durationDays, durationHours } = formData;
     const durationEstimate =
-      durationDays === 0 && durationHours === 0
-        ? ""
-        : `${durationDays}d ${durationHours}h`;
+      durationDays === 0 && durationHours === 0 ? "" : `${durationDays}d ${durationHours}h`;
 
     const payload = {
       categoryId: selectedCategoryId,
@@ -199,7 +222,7 @@ const AddServiceForm = () => {
     try {
       await postNewService(payload);
       toast.success("Service added successfully!");
-      navigate("/dashboard/services");
+      navigate("/dashboard/my-services");
     } catch (err: any) {
       handleApiError(err, {
         logout,
@@ -209,12 +232,8 @@ const AddServiceForm = () => {
         onKnown: {
           validation_failed: () => {
             const parsedErrors: Record<string, string[]> = {};
-            for (const [key, val] of Object.entries(
-              err.validationErrors || {}
-            )) {
-              const finalKey = key.startsWith("details.")
-                ? key.split(".")[1]
-                : key;
+            for (const [key, val] of Object.entries(err.validationErrors || {})) {
+              const finalKey = key.startsWith("details.") ? key.split(".")[1] : key;
               parsedErrors[finalKey] = Array.isArray(val) ? val : [String(val)];
             }
             setErrorMap(parsedErrors);
@@ -227,8 +246,27 @@ const AddServiceForm = () => {
     }
   };
 
+   const renderErrorState = () => (
+    <div className="flex flex-col items-center justify-center text-center text-white mt-10 space-y-4">
+      <h2 className="text-2xl font-bold">Something went wrong</h2>
+      <p className="text-red-300 max-w-md">
+        Failed to load your form. Please try again later.
+      </p>
+      <button
+        onClick={() => window.location.reload()}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Retry
+      </button>
+    </div>
+  );
+
   if (loadingInitial) {
-    return <LoadingSpinner text="Loading categories..." />;
+    return <LoadingSpinner text="Loading..." />;
+  }
+
+  if (fatalError) {
+    return renderErrorState();
   }
 
   return (
@@ -239,9 +277,7 @@ const AddServiceForm = () => {
         />
       )}
 
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Add a New Service
-      </h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6">Add a New Service</h2>
 
       <form
         onSubmit={handleSubmit}

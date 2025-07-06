@@ -39,7 +39,7 @@ const ServiceProviderHomePage = () => {
         handleApiError(err, {
           logout,
           knownMessages: {
-            forbidden: "You don't have permission to access your services.",
+            forbidden: "You don't have permission to access services.",
             not_found: "No services found for this provider.",
           },
           onKnown: {
@@ -62,29 +62,38 @@ const ServiceProviderHomePage = () => {
     <section className="min-h-[calc(100vh-64px)] bg-[length:100%] bg-no-repeat bg-[center_35%] flex items-center justify-center px-6 py-10">
       <div className="max-w-6xl w-full text-white">
         <div className="bg-black/50 p-6 md:p-10 rounded-xl shadow-lg">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-6">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold mb-2">
+              <h1 className="text-3xl md:text-4xl font-bold mb-2 leading-tight">
                 Manage your services with ease
               </h1>
-              <p className="text-green-100 text-sm">
-                Here's a quick snapshot of your active listings.
+              <p className="text-green-100 text-sm max-w-md">
+                Here's a quick snapshot of your active listings. Add new
+                services or edit existing ones anytime.
               </p>
             </div>
-            <button
-              onClick={() => navigate("/dashboard/add-service")}
-              className="mt-4 md:mt-0 bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium"
-            >
-              + Add New Service
-            </button>
+
+            <div className="text-right">
+              <button
+                onClick={() => navigate("/dashboard/add-service")}
+                className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium whitespace-nowrap"
+              >
+                + Add New Service
+              </button>
+            </div>
           </div>
 
           {loading ? (
             <LoadingSpinner text="Loading your services..." />
           ) : topServices.length === 0 ? (
-            <p className="text-green-100">
-              You have not added any services yet.
-            </p>
+            <div className="flex flex-col items-center justify-center text-center py-16 text-green-100">
+              <p className="text-lg font-medium">
+                You haven't added any services yet.
+              </p>
+              <p className="text-sm mt-1">
+                Start by clicking the "Add New Service" button.
+              </p>
+            </div>
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -97,7 +106,7 @@ const ServiceProviderHomePage = () => {
                 ))}
               </div>
 
-              <div className="text-right mt-4">
+              <div className="text-right mt-6">
                 <button
                   onClick={() => navigate("/dashboard/my-services")}
                   className="text-sm text-green-300 hover:text-white underline"

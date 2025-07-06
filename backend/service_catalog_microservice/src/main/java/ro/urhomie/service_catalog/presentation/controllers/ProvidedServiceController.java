@@ -32,8 +32,9 @@ public class ProvidedServiceController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Service found and returned successfully"),
-            @ApiResponse(responseCode = "404", description = "No service found with the specified ID"),
-            @ApiResponse(responseCode = "400", description = "Invalid service ID format")
+            @ApiResponse(responseCode = "400", description = "Invalid service ID format"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "404", description = "No service found with the specified ID")
     })
     @GetMapping("{id}")
     public ResponseEntity<ProvidedServiceDto> getServiceById(@PathVariable String id) {
@@ -60,6 +61,7 @@ public class ProvidedServiceController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of services"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
             @ApiResponse(responseCode = "404", description = "No services found for the specified provider ID")
     })
     @GetMapping("/by-provider/{id}")
@@ -84,6 +86,7 @@ public class ProvidedServiceController {
             description = "Search for services by title, description, location, or category")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved matching services"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
             @ApiResponse(responseCode = "404", description = "No matching services found for the given criteria")
     })
     @GetMapping
@@ -108,7 +111,9 @@ public class ProvidedServiceController {
                     "pricing, and configuration details. The service becomes immediately available for discovery and booking."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Service successfully registered and added to the catalog")
+            @ApiResponse(responseCode = "201", description = "Service successfully registered and added to the catalog"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
     })
     @PreAuthorize("hasAuthority('SERVICE_PROVIDER') and @providerAccessChecker.isSameServiceProvider(#createServiceDto.providerId, authentication.principal)")
     @PostMapping
@@ -133,6 +138,8 @@ public class ProvidedServiceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Service successfully updated"),
             @ApiResponse(responseCode = "400", description = "Invalid or missing service ID"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "No service found with the specified ID"),
             @ApiResponse(responseCode = "422", description = "Business validation failed")
     })
@@ -168,6 +175,8 @@ public class ProvidedServiceController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Service successfully deleted"),
             @ApiResponse(responseCode = "400", description = "Invalid or missing service ID"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "No service found with the specified ID")
     })
     @PreAuthorize("hasAuthority('SERVICE_PROVIDER') and @providerAccessChecker.isOwnerOfService(#id, authentication.principal)")

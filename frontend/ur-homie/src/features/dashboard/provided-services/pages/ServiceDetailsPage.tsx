@@ -52,8 +52,8 @@ const ServiceDetailsPage = () => {
           onKnown: {
             not_found: () =>
               navigate("/not-found?type=service", { replace: true }),
-            unauthorized: () => navigate("/home", { replace: true }),
-            forbidden: () => navigate("/home", { replace: true }),
+              unauthorized: () => navigate("/home", { replace: true }),
+              forbidden: () => navigate("/home", { replace: true }),
           },
           onDefault: () => {
             toast.error("Something went wrong. Please try again later.");
@@ -74,7 +74,7 @@ const ServiceDetailsPage = () => {
     try {
       await deleteServiceById(id);
       toast.success("Service deleted successfully!");
-      navigate("/dashboard/services");
+      navigate("/dashboard/my-services");
     } catch (err: any) {
       handleApiError(err, {
         logout,

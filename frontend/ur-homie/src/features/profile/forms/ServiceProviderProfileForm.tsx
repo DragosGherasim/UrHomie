@@ -124,14 +124,18 @@ const ServiceProviderProfileForm: React.FC<ServiceProviderProfileFormProps> = ({
                 value={(formData as any)[key]}
                 readOnly={!isEditing}
                 onChange={onChange}
-                className={`w-full px-4 py-2 border rounded-md focus:outline-none resize-none overflow-hidden ${
+                className={`w-full px-4 py-2 border rounded-md focus:outline-none ${
                   isEditing
                     ? `border-gray-300 focus:ring-2 focus:ring-green-500 ${
                         errorMap?.[key] ? "border-red-500" : ""
-                      }`
-                    : "border-transparent bg-gray-100 text-gray-600 cursor-text"
+                      } resize-none overflow-hidden`
+                    : "border-transparent bg-gray-100 text-gray-600 cursor-text resize-none"
                 }`}
-                style={{ height: "auto" }}
+                style={{
+                  height: "auto",
+                  overflowY: "auto",
+                  whiteSpace: "pre-wrap",
+                }}
                 rows={1}
                 onInput={(e) => {
                   const target = e.target as HTMLTextAreaElement;

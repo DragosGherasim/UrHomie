@@ -37,6 +37,8 @@ public class BookingController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of bookings"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "No bookings found for the specified client ID")
     })
     @PreAuthorize("hasAuthority('CLIENT') and @userAccessChecker.isSameClient(#clientId, authentication.principal)")
@@ -65,6 +67,8 @@ public class BookingController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of bookings"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "No bookings found for the specified service provider ID")
     })
     @PreAuthorize("hasAuthority('SERVICE_PROVIDER') and @userAccessChecker.isSameProvider(#serviceProviderId, authentication.principal)")
@@ -92,8 +96,10 @@ public class BookingController {
             description = "Creates a booking for a specific service by a client, scheduled at a future time"
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Boo2king successfully created"),
+            @ApiResponse(responseCode = "201", description = "Booking successfully created"),
             @ApiResponse(responseCode = "400", description = "Invalid json syntax"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "409", description = "Data integrity violation - possible constraint conflict"),
             @ApiResponse(responseCode = "415", description = "Unsupported media type"),
             @ApiResponse(responseCode = "422", description = "Validation error: invalid input data")
@@ -116,6 +122,8 @@ public class BookingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Booking confirmed successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid state for confirmation"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PreAuthorize("hasAuthority('SERVICE_PROVIDER') and @userAccessChecker.isOwnerAsProvider(#id, authentication.principal)")
@@ -144,6 +152,8 @@ public class BookingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Booking cancelled successfully"),
             @ApiResponse(responseCode = "400", description = "Invalid state for cancellation"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "Booking not found"),
             @ApiResponse(responseCode = "422", description = "Validation failed")
     })
@@ -184,6 +194,8 @@ public class BookingController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Booking marked as finished"),
             @ApiResponse(responseCode = "400", description = "Invalid state for finishing"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "Booking not found")
     })
     @PreAuthorize("hasAuthority('SERVICE_PROVIDER') and @userAccessChecker.isOwnerAsProvider(#id, authentication.principal)")

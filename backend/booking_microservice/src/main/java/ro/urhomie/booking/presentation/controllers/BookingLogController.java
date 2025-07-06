@@ -22,16 +22,15 @@ import java.util.Optional;
 public class BookingLogController {
 
     private static final Logger logger = LoggerFactory.getLogger(BookingLogController.class);
-    private final BookingLogService bookingLogService;
-
     @Operation(
             summary = "Get decline message for a cancelled booking",
             description = "Returns the decline message and log ID for a cancelled booking"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved the decline message"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized - Authentication required"),
+            @ApiResponse(responseCode = "403", description = "Forbidden - Access denied"),
             @ApiResponse(responseCode = "404", description = "No cancelled log found for the specified booking ID"),
-            @ApiResponse(responseCode = "403", description = "User is not authorized to access this booking")
     })
     @PreAuthorize("(hasAuthority('CLIENT') and @userAccessChecker.isOwnerAsClient(#bookingId, authentication.principal))" +
             " or (hasAuthority('SERVICE_PROVIDER') and @userAccessChecker.isOwnerAsProvider(#bookingId, authentication.principal))")
@@ -56,4 +55,6 @@ public class BookingLogController {
         logger.info("Successfully retrieved decline message for booking ID {}: {}", bookingId, responseDto.getDeclineMessage());
         return ResponseEntity.ok(responseDto);
     }
+
+    private final BookingLogService bookingLogService;
 }

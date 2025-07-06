@@ -17,6 +17,7 @@ const ProfilePage = () => {
   const [originalData, setOriginalData] = useState<any>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [errorMap, setErrorMap] = useState<Record<string, string[]>>();
+  const [fatalError, setFatalError] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,6 +36,7 @@ const ProfilePage = () => {
             not_found: () => navigate("/not-found?type=profile"),
           },
           fallbackMessage: "Failed to load profile.",
+          onDefault: () => setFatalError(true),
         });
       }
     };
@@ -42,7 +44,7 @@ const ProfilePage = () => {
     if (isAuthenticated && accessToken && userId) {
       loadProfile();
     }
-  }, [isAuthenticated, accessToken, userId, navigate, role]);
+  }, [isAuthenticated, accessToken, userId, navigate, role, logout]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -97,9 +99,26 @@ const ProfilePage = () => {
     setErrorMap(undefined);
   };
 
+  const renderErrorState = () => (
+    <div className="flex flex-col items-center justify-center text-center text-white mt-10 space-y-4">
+      <h2 className="text-2xl font-bold">Something went wrong</h2>
+      <p className="text-red-300 max-w-md">
+        Failed to load your profile. Please try again later.
+      </p>
+      <button
+        onClick={() => window.location.reload()}
+        className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        Retry
+      </button>
+    </div>
+  );
+
   return (
     <ProfileLayout>
-      {formData ? (
+      {fatalError ? (
+        renderErrorState()
+      ) : formData ? (
         role === "client" ? (
           <ClientProfileForm
             formData={formData}

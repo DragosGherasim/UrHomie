@@ -161,8 +161,8 @@ db.services.insertMany([
         basePrice: 450.00,
         durationEstimate: "1d 4h",
         city: "Cluj-Napoca",
-        address: "Strada Baii nr. 10",
-        phoneNumber: "0753992675",
+        address: "Strada Furnizorului nr. 5",
+        phoneNumber: "0742832777",
         details: {
             service_scope: "installation",
             included_fixtures: ["sink", "toilet"]
@@ -176,8 +176,8 @@ db.services.insertMany([
         basePrice: 300.00,
         durationEstimate: "1d 1h",
         city: "Cluj-Napoca",
-        address: "Strada Reparatiei nr. 5",
-        phoneNumber: "0753992675",
+        address: "Strada Furnizorului nr. 5",
+        phoneNumber: "0742832777",
         details: {
             service_scope: "repair",
             included_fixtures: ["pipes"]
@@ -190,9 +190,9 @@ db.services.insertMany([
         description: "Safe installation of lights and electrical wiring for new or renovated homes.",
         basePrice: 600.00,
         durationEstimate: "2d 2h",
-        city: "Cluj-Napoca",
-        address: "Strada Electricitatii nr. 8",
-        phoneNumber: "0753992675",
+         city: "Cluj-Napoca",
+        address: "Strada Furnizorului nr. 5",
+        phoneNumber: "0742832777",
         details: {
             electrical_services: ["lighting", "wiring"]
         }
@@ -205,8 +205,8 @@ db.services.insertMany([
         basePrice: 250.00,
         durationEstimate: "1d 0h",
         city: "Cluj-Napoca",
-        address: "Strada Intretinerii nr. 3",
-        phoneNumber: "0753992675",
+        address: "Strada Furnizorului nr. 5",
+        phoneNumber: "0742832777",
         details: {
             maintenance_type: "preventive",
             covered_areas: ["interior", "basement"]
@@ -220,8 +220,8 @@ db.services.insertMany([
         basePrice: 900.00,
         durationEstimate: "3d 0h",
         city: "Cluj-Napoca",
-        address: "Strada Creatiei nr. 1",
-        phoneNumber: "0753992675",
+        address: "Strada Furnizorului nr. 5",
+        phoneNumber: "0742832777",
         details: {}
     },
     {
@@ -231,9 +231,9 @@ db.services.insertMany([
         description: "Thorough cleaning of construction debris and dust after renovation projects.",
         basePrice: 380.00,
         durationEstimate: "1d 5h",
-        city: "București",
-        address: "Strada Curateniei nr. 12",
-        phoneNumber: "0753992675",
+        city: "Iasi",
+        address: "Strada Lalelor nr. 10",
+        phoneNumber: "0742832890",
         details: {
             cleaning_type: "post-renovation",
             frequency: "once"
@@ -246,9 +246,9 @@ db.services.insertMany([
         description: "High-quality painting services for living rooms, bedrooms, and kitchens.",
         basePrice: 500.00,
         durationEstimate: "2d 0h",
-        city: "București",
-        address: "Strada Culorii nr. 7",
-        phoneNumber: "0753982675",
+        city: "Iasi",
+        address: "Strada Lalelor nr. 10",
+        phoneNumber: "0742832890",
         details: {
             number_of_rooms: 3
         }
@@ -260,9 +260,9 @@ db.services.insertMany([
         description: "Filter cleaning and air quality check for HVAC systems.",
         basePrice: 280.00,
         durationEstimate: "0d 6h",
-        city: "București",
-        address: "Strada Ventilatiei nr. 15",
-        phoneNumber: "0753992675",
+        city: "Iasi",
+        address: "Strada Lalelor nr. 10",
+        phoneNumber: "0742832890",
         details: {
             service_type: "filter cleaning"
         }
@@ -274,9 +274,9 @@ db.services.insertMany([
         description: "Complete care of your garden including watering, weeding, and trimming.",
         basePrice: 350.00,
         durationEstimate: "1d 2h",
-        city: "București",
-        address: "Strada Florilor nr. 22",
-        phoneNumber: "0753992675",
+        city: "Iasi",
+        address: "Strada Lalelor nr. 10",
+        phoneNumber: "0742832890",
         details: {
             area_size: 150
         }
@@ -288,9 +288,9 @@ db.services.insertMany([
         description: "Professional installation and setup of home electrical panels.",
         basePrice: 700.00,
         durationEstimate: "2d 4h",
-        city: "București",
-        address: "Strada Panoului nr. 9",
-        phoneNumber: "0753992675",
+        city: "Iasi",
+        address: "Strada Lalelor nr. 10",
+        phoneNumber: "0742832890",
         details: {
             electrical_services: ["panels", "appliances"]
         }
